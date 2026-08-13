@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Input Stock Opname K792 - 3 SHIFT</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>*{font-family:'Poppins'; box-sizing:border-box} body{background:#f4f7f9; padding:10px; margin:0}
-.container{background:white; padding:15px; border-radius:15px; max-width:1200px; margin:auto; overflow-x:auto}
+.container{background:white; padding:15px; border-radius:15px; max-width:1300px; margin:auto; overflow-x:auto}
 h2{text-align:center; margin:10px 0 5px}
 .subjudul{text-align:center; color:#7f8c8d; margin-bottom:10px}
 .marquee{width:100%; background:linear-gradient(90deg, #e74c3c, #f39c12); color:white; padding:10px; border-radius:8px; overflow:hidden; margin-bottom:10px; font-weight:600}
@@ -9,13 +9,14 @@ h2{text-align:center; margin:10px 0 5px}
 @keyframes jalan{0%{transform:translateX(100%)} 100%{transform:translateX(-100%)}}
 .btn{padding:10px 15px; border:none; border-radius:8px; margin:5px; cursor:pointer; font-weight:600; font-size:14px}
 .btn-back{background:#95a5a6; color:white}.btn-save{background:#27ae60; color:white; width:100%; margin-top:10px; font-size:16px}
-.btn-hapus{background:#e74c3c; color:white}
+.btn-hapus{background:#e74c3c; color:white}.btn-copy{background:#3498db; color:white}
 .setting{display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; align-items:center}
 .setting select,.setting input{padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600}
 .table-wrap{overflow-x:auto}
-table{width:100%; border-collapse:collapse; font-size:12px; min-width:1100px} th,td{border:1px solid #ddd; padding:8px; text-align:center}
+table{width:100%; border-collapse:collapse; font-size:11px; min-width:1300px} th,td{border:1px solid #ddd; padding:6px; text-align:center}
 th{background:#e74c3c; color:white; position:sticky; top:0}
-input{width:80px; padding:6px; text-align:center; border:1px solid #ccc; border-radius:5px}
+input{width:70px; padding:5px; text-align:center; border:1px solid #ccc; border-radius:5px}
+input.harga{width:90px; background:#fffbe6}
 td:nth-child(4){text-align:left}
 .selesai{color:green; font-weight:bold}.kurang{color:red}.lebih{color:green}
 </style>
@@ -23,8 +24,9 @@ td:nth-child(4){text-align:left}
 
 <button class="btn btn-back" onclick="window.location.href='home.html'">⬅️ Kembali ke Home</button>
 <button class="btn btn-hapus" onclick="hapusData()">🗑️ Hapus Shift Ini</button>
+<button class="btn btn-copy" onclick="copyOHDariShiftSebelumnya()">📋 Copy OH dari Shift Sebelumnya</button>
 
-<div class="marquee"><span>📢 APLIKASI STOCK OPNAME K792 - 3 SHIFT - DATA TERPISAH PER SHIFT & TANGGAL 📢</span></div>
+<div class="marquee"><span>📢 APLIKASI STOCK OPNAME K792 - 3 SHIFT - ADA HITUNGAN SELISIH RP 📢</span></div>
 
 <h2>📝 INPUT STOCK OPNAME TOKO K792</h2>
 
@@ -42,38 +44,38 @@ td:nth-child(4){text-align:left}
 
 <div class="table-wrap">
 <table id="tabelOpname"><thead><tr>
-<th>No</th><th>Kategori</th><th>Kode PLU</th><th>Nama Barang Lengkap</th><th>OH Sistem</th><th>Stock Fisik</th><th>Selisih Qty</th><th>Status</th>
+<th>No</th><th>Kategori</th><th>Kode</th><th>Nama Barang</th><th>Harga</th><th>OH</th><th>Fisik</th><th>Selisih Qty</th><th>Selisih Rp</th><th>Status</th>
 </tr></thead><tbody></tbody></table>
 </div>
 
 <button class="btn btn-save" onclick="simpanData()">💾 SIMPAN DATA SHIFT & LIHAT LAPORAN</button>
 </div><script>
 const dataBarang = [
-{no:1, kat:"KANZLER SINGLE", kode:"417806", nama:"KANZLER SINGLE MINI 65 GRAM"},
-{no:2, kat:"KANZLER SINGLE", kode:"417804", nama:"KANZLER SINGLE ORIGINAL 65 GRAM"},
-{no:3, kat:"KANZLER SINGLE", kode:"417805", nama:"KANZLER SINGLE KEJU 65 GRAM"},
-{no:4, kat:"KANZLER SINGLE", kode:"423992", nama:"KANZLER SINGLE HOT 65 GRAM"},
-{no:5, kat:"KANZLER SINGLE", kode:"435578", nama:"KANZLER SINGLE GOCHUJANG 65 GRAM"},
-{no:6, kat:"KANZLER BAKSO", kode:"435736", nama:"KANZLER BAKSO HOT 48 GRAM"},
-{no:7, kat:"KANZLER BAKSO", kode:"465771", nama:"KANZLER BAKSO GOCHUJANG 55 GRAM"},
-{no:8, kat:"KANZLER BAKSO", kode:"428660", nama:"KANZLER BAKSO ORIGINAL 48 GRAM"},
-{no:9, kat:"KANZLER BAKSO", kode:"428662", nama:"KANZLER BAKSO KEJU 48 GRAM"},
-{no:10, kat:"FIESTA SOSIS", kode:"443704", nama:"FIESTA RTG SOSIS SPICY KOREAN 500 GRAM"},
-{no:11, kat:"ECO BAG", kode:"EB001", nama:"ECO BAG ALFAMART"},
-{no:12, kat:"ECO BAG", kode:"EB002", nama:"ECO BAG KECIL"},
-{no:13, kat:"ECO BAG", kode:"EB003", nama:"ECO BAG GEDE"},
-{no:14, kat:"FRESH MILK", kode:"FM001", nama:"SUSU FRESH MILK DIAMOND 1 LITER"},
-{no:15, kat:"FRESH MILK", kode:"FM002", nama:"SUSU FRESH MILK GREENFIELDS 1 LITER"},
-{no:16, kat:"FRESH MILK", kode:"FM003", nama:"SUSU UHT OMELA 1 LITER"},
-{no:17, kat:"LAIN-LAIN", kode:"RAW001", nama:"RAW ICE CUP PLASTIC"},
-{no:18, kat:"LAIN-LAIN", kode:"418605", nama:"RAW HOT BEANSPOT"},
-{no:19, kat:"AIR MINERAL", kode:"422782", nama:"LE MINERAL GALON 15 LITER"},
-{no:20, kat:"AIR MINERAL", kode:"460235", nama:"NPL GALON 15 LITER"},
-{no:21, kat:"GULA PASIR", kode:"401698", nama:"GULA PSM PREMIUM 1 KILOGRAM"},
-{no:22, kat:"GULA PASIR", kode:"405970", nama:"GULA ROSE BRAND TEBU PREMIUM 1 KILOGRAM"},
-{no:23, kat:"GULA PASIR", kode:"466054", nama:"GULA VIGULA KRISTAL PUTIH 1 KILOGRAM"},
-{no:24, kat:"GULA PASIR", kode:"221587", nama:"GULA GULAKU TEBU PREMIUM 1 KILOGRAM"},
-{no:25, kat:"GULA PASIR", kode:"406643", nama:"GULA GMP KRISTAL PUTIH 1 KILOGRAM"}
+{no:1, kat:"KANZLER SINGLE", kode:"417806", nama:"KANZLER SINGLE MINI 65 GRAM", harga:18500},
+{no:2, kat:"KANZLER SINGLE", kode:"417804", nama:"KANZLER SINGLE ORIGINAL 65 GRAM", harga:18500},
+{no:3, kat:"KANZLER SINGLE", kode:"417805", nama:"KANZLER SINGLE KEJU 65 GRAM", harga:18500},
+{no:4, kat:"KANZLER SINGLE", kode:"423992", nama:"KANZLER SINGLE HOT 65 GRAM", harga:18500},
+{no:5, kat:"KANZLER SINGLE", kode:"435578", nama:"KANZLER SINGLE GOCHUJANG 65 GRAM", harga:19500},
+{no:6, kat:"KANZLER BAKSO", kode:"435736", nama:"KANZLER BAKSO HOT 48 GRAM", harga:15500},
+{no:7, kat:"KANZLER BAKSO", kode:"465771", nama:"KANZLER BAKSO GOCHUJANG 55 GRAM", harga:16500},
+{no:8, kat:"KANZLER BAKSO", kode:"428660", nama:"KANZLER BAKSO ORIGINAL 48 GRAM", harga:15500},
+{no:9, kat:"KANZLER BAKSO", kode:"428662", nama:"KANZLER BAKSO KEJU 48 GRAM", harga:15500},
+{no:10, kat:"FIESTA SOSIS", kode:"443704", nama:"FIESTA RTG SOSIS SPICY KOREAN 500 GRAM", harga:42000},
+{no:11, kat:"ECO BAG", kode:"EB001", nama:"ECO BAG ALFAMART", harga:3000},
+{no:12, kat:"ECO BAG", kode:"EB002", nama:"ECO BAG KECIL", harga:2000},
+{no:13, kat:"ECO BAG", kode:"EB003", nama:"ECO BAG GEDE", harga:5000},
+{no:14, kat:"FRESH MILK", kode:"FM001", nama:"SUSU FRESH MILK DIAMOND 1 LITER", harga:26000},
+{no:15, kat:"FRESH MILK", kode:"FM002", nama:"SUSU FRESH MILK GREENFIELDS 1 LITER", harga:28000},
+{no:16, kat:"FRESH MILK", kode:"FM003", nama:"SUSU UHT OMELA 1 LITER", harga:24000},
+{no:17, kat:"LAIN-LAIN", kode:"RAW001", nama:"RAW ICE CUP PLASTIC", harga:500},
+{no:18, kat:"LAIN-LAIN", kode:"418605", nama:"RAW HOT BEANSPOT", harga:0},
+{no:19, kat:"AIR MINERAL", kode:"422782", nama:"LE MINERAL GALON 15 LITER", harga:22000},
+{no:20, kat:"AIR MINERAL", kode:"460235", nama:"NPL GALON 15 LITER", harga:21000},
+{no:21, kat:"GULA PASIR", kode:"401698", nama:"GULA PSM PREMIUM 1 KILOGRAM", harga:16000},
+{no:22, kat:"GULA PASIR", kode:"405970", nama:"GULA ROSE BRAND TEBU PREMIUM 1 KILOGRAM", harga:16500},
+{no:23, kat:"GULA PASIR", kode:"466054", nama:"GULA VIGULA KRISTAL PUTIH 1 KILOGRAM", harga:15800},
+{no:24, kat:"GULA PASIR", kode:"221587", nama:"GULA GULAKU TEBU PREMIUM 1 KILOGRAM", harga:16200},
+{no:25, kat:"GULA PASIR", kode:"406643", nama:"GULA GMP KRISTAL PUTIH 1 KILOGRAM", harga:15900}
 ];
 
 let currentShift = 'shift1';
@@ -92,12 +94,15 @@ function renderTable(){
     const data = dataLama.find(x => x.no === d.no) || {};
     const ohVal = data.oh?? '';
     const fisikVal = data.fisik?? '';
+    const hargaVal = data.harga?? d.harga;
 
     tbody.innerHTML += `<tr>
       <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td>${d.nama}</td>
+      <td><input type="number" class="harga" id="harga${d.no}" value="${hargaVal}" oninput="hitung(${d.no})"></td>
       <td><input type="number" step="0.001" id="oh${d.no}" value="${ohVal}" placeholder="0" oninput="hitung(${d.no})"></td>
       <td><input type="number" step="0.001" id="fisik${d.no}" value="${fisikVal}" placeholder="0" oninput="hitung(${d.no})"></td>
       <td id="selisih${d.no}">-</td>
+      <td id="selisihRp${d.no}">-</td>
       <td id="status${d.no}">-</td>
     </tr>`;
   });
@@ -105,32 +110,38 @@ function renderTable(){
 }
 
 function hitung(no){
+  const harga = parseFloat(document.getElementById('harga'+no).value) || 0;
   const oh = parseFloat(document.getElementById('oh'+no).value) || 0;
   const fisik = parseFloat(document.getElementById('fisik'+no).value) || 0;
   if(oh === 0 && fisik === 0){
     document.getElementById('selisih'+no).innerText = '-';
+    document.getElementById('selisihRp'+no).innerText = '-';
     document.getElementById('status'+no).innerText = '-';
     return;
   }
-  const selisih = (fisik - oh).toFixed(3);
-  document.getElementById('selisih'+no).innerText = selisih;
-
+  const selisih = fisik - oh;
+  const selisihRp = selisih * harga;
+  document.getElementById('selisih'+no).innerText = selisih.toFixed(3);
+  document.getElementById('selisihRp'+no).innerText = 'Rp ' + selisihRp.toLocaleString('id-ID');
+  
   let status = '';
   if(selisih == 0) status = '<span class="selesai">✅</span>';
-  else if(selisih < 0) status = `<span class="kurang">(${Math.abs(selisih)})</span>`;
-  else status = `<span class="lebih">(+${selisih})</span>`;
+  else if(selisih < 0) status = `<span class="kurang">RUGI</span>`;
+  else status = `<span class="lebih">LEBIH</span>`;
   document.getElementById('status'+no).innerHTML = status;
   document.getElementById('selisih'+no).style.color = selisih<0?'red':selisih>0?'green':'black';
+  document.getElementById('selisihRp'+no).style.color = selisihRp<0?'red':selisihRp>0?'green':'black';
 }
 
 function simpanData(){
   const tgl = document.getElementById('tanggalShift').value;
   const key = `dataOpname_${currentShift}_${tgl}`;
   const hasil = dataBarang.map(d=>{
+    const harga = parseFloat(document.getElementById('harga'+d.no).value) || 0;
     const oh = parseFloat(document.getElementById('oh'+d.no).value) || 0;
     const fisik = parseFloat(document.getElementById('fisik'+d.no).value) || 0;
     const selisih = fisik - oh;
-    return {...d, oh, fisik, selisih, tanggal: tgl};
+    return {...d, harga, oh, fisik, selisih, selisihRp: selisih*harga, tanggal: tgl};
   });
   localStorage.setItem(key, JSON.stringify(hasil));
   localStorage.setItem('judulLaporan', document.getElementById('judulShift').innerText);
@@ -146,10 +157,28 @@ function hapusData(){
   }
 }
 
+function copyOHDariShiftSebelumnya(){
+  const tgl = document.getElementById('tanggalShift').value;
+  let shiftSebelumnya = '';
+  if(currentShift === 'shift2') shiftSebelumnya = 'shift1';
+  if(currentShift === 'shift3') shiftSebelumnya = 'shift2';
+  if(shiftSebelumnya === ''){ alert('Shift 1 tidak bisa copy'); return; }
+  const keySebelumnya = `dataOpname_${shiftSebelumnya}_${tgl}`;
+  const dataSebelumnya = JSON.parse(localStorage.getItem(keySebelumnya)) || [];
+  if(dataSebelumnya.length === 0){ alert(`Data ${shiftSebelumnya.toUpperCase()} belum ada`); return; }
+  if(confirm(`Copy OH dari ${shiftSebelumnya.toUpperCase()}?`)){
+    dataSebelumnya.forEach(d => {
+      document.getElementById('oh'+d.no).value = d.fisik;
+      document.getElementById('fisik'+d.no).value = '';
+      hitung(d.no);
+    });
+    alert('Berhasil di copy!');
+  }
+}
+
 function gantiShift(){
   currentShift = document.getElementById('pilihShift').value;
   renderTable();
 }
-
 renderTable();
 </script></body></html>
