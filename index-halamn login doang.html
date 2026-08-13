@@ -1,110 +1,30 @@
-ideFormTambah(); showToast(`✅ ${itemBaru.nama} ditambah`);
-  document.getElementById('inKat').value = ''; document.getElementById('inKode').value = ''; document.getElementById('inNama').value = '';
-}
-
-const templateShift = [
-{kategori:"KANZLER SINGLE", kode:"417806", nama:"kanzler sgl mini 65g", oh:"14", fisik:"14", harga:"15000"},
-{kategori:"KANZLER SINGLE", kode:"417804", nama:"kanzler sgl ori 65g", oh:"28", fisik:"28", harga:"15000"},
-{kategori:"KANZLER SINGLE", kode:"417805", nama:"kanzler single keju", oh:"18", fisik:"18", harga:"15000"},
-{kategori:"KANZLER SINGLE", kode:"423992", nama:"kanzler single hot", oh:"32", fisik:"32", harga:"15000"},
-{kategori:"KANZLER SINGLE", kode:"435578", nama:"kanzler single gochujang", oh:"36", fisik:"36", harga:"15000"},
-{kategori:"KANZLER BAKSO", kode:"435736", nama:"kanzler bakso hot 48g", oh:"14", fisik:"14", harga:"12000"},
-{kategori:"KANZLER BAKSO", kode:"465771", nama:"kanzler bakso gochujang 55g", oh:"19", fisik:"18", harga:"12000"},
-{kategori:"KANZLER BAKSO", kode:"428660", nama:"kanzler bakso ori 48g", oh:"8", fisik:"8", harga:"12000"},
-{kategori:"KANZLER BAKSO", kode:"428662", nama:"kanzler bakso keju 48g", oh:"10", fisik:"10", harga:"12000"},
-{kategori:"FIESTA SOSIS", kode:"443704", nama:"fiesta rtg sosis spicykorean", oh:"28", fisik:"28", harga:"18000"},
-{kategori:"ECO BAG", kode:"ECO1", nama:"Alfamart ECO", oh:"295", fisik:"302", harga:"3000"},
-{kategori:"ECO BAG", kode:"ECO2", nama:"ECO bag kecil", oh:"135", fisik:"132", harga:"2500"},
-{kategori:"ECO BAG", kode:"ECO3", nama:"ECO bag gede", oh:"65", fisik:"69", harga:"5000"},
-{kategori:"FRESHMILK", kode:"FM1", nama:"Diamond", oh:"24", fisik:"24", harga:"25000"},
-{kategori:"FRESHMILK", kode:"FM2", nama:"Greenfield milk", oh:"16", fisik:"16", harga:"28000"},
-{kategori:"FRESHMILK", kode:"FM3", nama:"Omela", oh:"36", fisik:"36", harga:"22000"},
-{kategori:"FRESHMILK", kode:"460235", nama:"NPL 15L", oh:"0", fisik:"0", harga:"120000"},
-{kategori:"FRESHMILK", kode:"422782", nama:"Le mineral 15L", oh:"1", fisik:"0", harga:"35000"},
-{kategori:"GULA", kode:"401698", nama:"PSM Gula Premium 1kg", oh:"38", fisik:"38", harga:"16000"},
-{kategori:"GULA", kode:"405970", nama:"Rose Brand Gula Tebu premium 1kg", oh:"41", fisik:"41", harga:"16000"},
-{kategori:"GULA", kode:"466054", nama:"Gula vigula kristal putih 1kg", oh:"7", fisik:"7", harga:"15000"},
-{kategori:"GULA", kode:"221587", nama:"Gulaku gula tebu premium", oh:"7", fisik:"6", harga:"16000"},
-{kategori:"GULA", kode:"406643", nama:"GMP Gula Kristal putih 1kg", oh:"32", fisik:"32", harga:"15000"},
-{kategori:"MINYAK", kode:"113079", nama:"Tropical myk grg pet 2L", oh:"58", fisik:"58", harga:"35000"},
-{kategori:"MINYAK", kode:"451350", nama:"Tropical myk grg pet 1,5L", oh:"16", fisik:"16", harga:"28000"},
-{kategori:"MINYAK", kode:"61132", nama:"Tropical myk grg pet 1L", oh:"48", fisik:"48", harga:"20000"},
-{kategori:"MINYAK", kode:"195673", nama:"sania mnyk grg pch 1L", oh:"35", fisik:"11", harga:"20000"},
-{kategori:"MINYAK", kode:"211141", nama:"Bimoli myk pch grg 1L", oh:"4", fisik:"4", harga:"20000"},
-{kategori:"MINYAK", kode:"6965", nama:"Barco myk grg pch 1L", oh:"12", fisik:"12", harga:"20000"},
-{kategori:"MINYAK", kode:"244111", nama:"SunCo myk grg pch 2L", oh:"72", fisik:"6", harga:"35000"},
-{kategori:"MINYAK", kode:"156747", nama:"Filma myk grg pch 2L", oh:"17", fisik:"5", harga:"35000"},
-{kategori:"MINYAK", kode:"192730", nama:"Bimoli myk grg pch 2L", oh:"16", fisik:"4", harga:"35000"},
-{kategori:"MINYAK", kode:"113222", nama:"Fortune myk grg pch 2L", oh:"29", fisik:"4", harga:"35000"},
-{kategori:"MINYAK", kode:"195674", nama:"Sania myk grg pch 2L", oh:"35", fisik:"3", harga:"35000"},
-{kategori:"MINYAK", kode:"211378", nama:"Bimoli myk grg spesial pch 2L", oh:"1", fisik:"1", harga:"38000"},
-{kategori:"MINYAK", kode:"121905", nama:"Sovia myk grg pch 2L", oh:"95", fisik:"10", harga:"35000"},
-{kategori:"MINYAK", kode:"437794", nama:"Harumnas myk grg pch 2L", oh:"0", fisik:"0", harga:"34000"},
-{kategori:"MINYAK", kode:"433436", nama:"Camar myk grg pch 2L", oh:"0", fisik:"0", harga:"34000"},
-{kategori:"MINYAK", kode:"123332", nama:"Alfamart myk grg pch 2L", oh:"40", fisik:"40", harga:"33000"},
-{kategori:"MINYAK", kode:"453308", nama:"Vipco myk 2L", oh:"6", fisik:"6", harga:"34000"},
-{kategori:"MINYAK", kode:"45258", nama:"Merah pth myk 2L", oh:"12", fisik:"12", harga:"34000"},
-{kategori:"MINYAK", kode:"436397", nama:"ikan dorang myk grng kelapa", oh:"7", fisik:"7", harga:"25000"}
-];
-
-function loadItems(){ dataBarang = templateShift.map(item => ({...item})); tampilkan(); showToast("📥 43 Item Dimuat"); }
-function updateOH(i,val){dataBarang[i].oh=val; tampilkan();}
-function updateFisik(i,val){dataBarang[i].fisik=val; tampilkan();}
-function updateHarga(i,val){dataBarang[i].harga=val; tampilkan();}
-function tampilkan(){
-  let container=document.getElementById('tabelContainer'); container.innerHTML='';
-  let kategoriList = [...new Set(dataBarang.map(x => x.kategori))];
-  let totalOH=0; let totalFisik=0;
-  kategoriList.forEach(kat => {
-    let html = `<h3>${kat}</h3><table><tr><th>No</th><th>Kode</th><th>Nama</th><th>OH</th><th>Fisik</th><th>Harga</th><th>Selisih</th><th>Selisih Rp</th></tr>`;
-    let no=1;
-    dataBarang.filter(x => x.kategori === kat).forEach((item) => {
-      let index = dataBarang.indexOf(item);
-      totalOH+=Number(item.oh)||0; totalFisik+=Number(item.fisik)||0;
-      let selisih=(Number(item.fisik)||0)-(Number(item.oh)||0); let selisihRp = selisih * (Number(item.harga)||0);
-      let classSelisih=selisih>0?'selisih-plus':selisih<0?'selisih-minus':'';
-      html+=`<tr><td>${no++}</td><td>${item.kode}</td><td style="text-align:left">${item.nama}</td>
-      <td><input type="number" value="${item.oh}" onchange="updateOH(${index},this.value)" style="width:60px"></td>
-      <td><input type="number" value="${item.fisik}" onchange="updateFisik(${index},this.value)" style="width:60px"></td>
-      <td><input type="number" value="${item.harga}" onchange="updateHarga(${index},this.value)" style="width:80px"></td>
-      <td class="${classSelisih}">${selisih}</td><td class="${classSelisih}">Rp ${selisihRp.toLocaleString()}</td></tr>`;
-    });
-    html+=`</table>`; container.innerHTML += html;
-  });
-  document.getElementById('totalStok').innerHTML=`Total Item: ${dataBarang.length} | OH: ${totalOH} | Fisik: ${totalFisik}`;
-}
-function updateDashboard(){
-  let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0));
-  let totalRugi = 0; minus.forEach(m => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); totalRugi += kurang * (Number(m.harga)||0); });
-  document.getElementById('dashTotal2').innerText = dataBarang.length;
-  document.getElementById('dashMinus2').innerText = minus.length;
-  document.getElementById('dashRugi2').innerText = 'Rp ' + totalRugi.toLocaleString();
-}
-function tampilkanRekapSelisih(){
-  let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0));
-  let html = '';
-  if(minus.length > 0){
-    html += `<h3>❌ REKAP BARANG MINUS: ${minus.length} Item</h3>`;
-    minus.forEach((m,i) => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); let rugi = kurang * (Number(m.harga)||0); html += `<p>${i+1}. ${m.nama} - Kurang <b>${kurang}</b> = <b>Rp ${rugi.toLocaleString()}</b></p>`; });
-  }
-  document.getElementById('rekapSelisih').innerHTML = html;
-}
-function simpanOpname(){ localStorage.setItem('so', JSON.stringify(dataBarang)); showToast(); }
-function kirimRekapWA(){
-  let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0));
-  if(minus.length===0) return alert('Tidak ada barang minus!');
-  let pesan = `*REKAP MINUS SO K792*\nTanggal: ${document.getElementById('tanggalOpname').value}\n\n`;
-  minus.forEach((m,i) => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); let rugi = kurang * (Number(m.harga)||0); pesan += `${i+1}. ${m.nama} - Kurang ${kurang} = Rp ${rugi.toLocaleString()}\n`; });
-  window.open(`https://wa.me/?text=${encodeURIComponent(pesan)}`);
-}
-function exportPDF(){
-  const doc = new jsPDF();
-  doc.setFontSize(16); doc.text("LAPORAN STOCK OPNAME K792", 105, 15, {align:"center"});
-  let y = 30; let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0)); let totalRugi=0;
-  doc.setFontSize(12); doc.text("REKAP BARANG MINUS", 14, y); y+=10;
-  minus.forEach((m,i) => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); let rugi = kurang * (Number(m.harga)||0); totalRugi+=rugi; doc.text(`${i+1}. ${m.nama} - Kurang ${kurang} = Rp ${rugi.toLocaleString()}`, 14, y); y+=7; });
-  doc.text(`TOTAL RUGI: Rp ${totalRugi.toLocaleString()}`, 14, y+5);
-  doc.save(`LAPORAN_SO_K792.pdf`); showToast("✅ PDF Download");
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login SO K792</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Poppins'} body{background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0}
+.container{background:white; padding:25px; border-radius:20px; width:90%; max-width:400px; text-align:center}
+input,button{width:100%; padding:12px; margin:6px 0; border:2px solid #eee; border-radius:10px; box-sizing:border-box}
+.btn-menu{padding:18px; font-size:18px; color:white; border:none; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>🔐 LOGIN SO K792</h2>
+  <input type="text" id="inputNIK" placeholder="NIK Karyawan">
+  <input type="password" id="inputPIN" placeholder="PIN">
+  <button class="btn-menu" onclick="login()">Login</button>
+  <p id="loginError" style="color:red"></p>
+</div>
+<script>
+function login(){ 
+  if(document.getElementById('inputNIK').value==="ADMIN" && document.getElementById('inputPIN').value==="1234"){ 
+    localStorage.setItem('userLogin', 'ADMIN');
+    window.location.href = "home.html"; 
+  } else document.getElementById('loginError').innerText='NIK/PIN Salah!'; 
 }
 </script>
 </body>
