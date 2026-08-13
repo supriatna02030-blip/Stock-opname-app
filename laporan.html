@@ -43,7 +43,6 @@ td.kanan{text-align:right}
 
 </div>
 <script>
-// DARK MODE
 function toggleDark(){
   document.body.classList.toggle('dark');
   let mode = document.body.classList.contains('dark')? 'dark' : 'light';
@@ -58,17 +57,8 @@ if(localStorage.getItem('theme') === 'dark'){
 document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
 loadLaporan();
 
-// MASTER OH + HARGA. UDAH GUA ISI DATA MINYAK DARI KAMU
+// MASTER OH + HARGA VERSI LAMA
 const masterOH = {
-  // MINYAK
-  '113079':{oh:58, harga:35000}, '451350':{oh:16, harga:28000}, '61132':{oh:48, harga:18000},
-  '195673':{oh:35, harga:17000}, '211141':{oh:4, harga:17000}, '6965':{oh:12, harga:17000},
-  '244111':{oh:72, harga:32000}, '156747':{oh:17, harga:32000}, '192730':{oh:16, harga:32000},
-  '113222':{oh:4, harga:32000}, '195674':{oh:33, harga:32000}, '211378':{oh:1, harga:34000},
-  '121905':{oh:94, harga:32000}, '437794':{oh:0, harga:30000}, '433436':{oh:0, harga:30000},
-  '123332':{oh:40, harga:31000}, '453308':{oh:6, harga:30000}, '45258':{oh:12, harga:30000},
-  '436397':{oh:7, harga:25000},
-  // FROZEN & LAIN. ISI SENDIRI OH & HARGANYA YA
   '417806':{oh:0, harga:0}, '417804':{oh:0, harga:0}, '417805':{oh:0, harga:0}, '423992':{oh:0, harga:0},
   '435578':{oh:0, harga:0}, '435736':{oh:0, harga:0}, '465771':{oh:0, harga:0}, '428660':{oh:0, harga:0},
   '428662':{oh:0, harga:0}, '443704':{oh:0, harga:0}, 'EB001':{oh:0, harga:0}, 'EB002':{oh:0, harga:0},
@@ -131,7 +121,6 @@ function loadLaporan(){
   div.innerHTML = html;
 }
 
-// Export ke format WA sama kayak chat kamu
 function exportWA(){
   const tgl = document.getElementById('tanggal').value;
   const data = JSON.parse(localStorage.getItem(`dataOpname_${tgl}`) || '[]');
