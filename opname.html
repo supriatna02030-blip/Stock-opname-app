@@ -11,10 +11,10 @@ h2{text-align:center; margin:10px 0 5px}
 .btn-back{background:#95a5a6; color:white}.btn-save{background:#27ae60; color:white; width:100%; margin-top:10px; font-size:16px}
 .btn-hapus{background:#e74c3c; color:white}
 .setting{display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; align-items:center}
-.setting select, .setting input{padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600}
+.setting select,.setting input{padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600}
 .table-wrap{overflow-x:auto}
 table{width:100%; border-collapse:collapse; font-size:12px; min-width:1100px} th,td{border:1px solid #ddd; padding:8px; text-align:center}
-th{background:#e74c3c; color:white; position:sticky; top:0} 
+th{background:#e74c3c; color:white; position:sticky; top:0}
 input{width:80px; padding:6px; text-align:center; border:1px solid #ccc; border-radius:5px}
 td:nth-child(4){text-align:left}
 .selesai{color:green; font-weight:bold}.kurang{color:red}.lebih{color:green}
@@ -24,21 +24,21 @@ td:nth-child(4){text-align:left}
 <button class="btn btn-back" onclick="window.location.href='home.html'">⬅️ Kembali ke Home</button>
 <button class="btn btn-hapus" onclick="hapusData()">🗑️ Hapus Shift Ini</button>
 
-<div class="marquee"><span>📢 APLIKASI STOCK OPNAME K792 - 3 SHIFT - DATA TERPISAH PER SHIFT 📢</span></div>
+<div class="marquee"><span>📢 APLIKASI STOCK OPNAME K792 - 3 SHIFT - DATA TERPISAH PER SHIFT & TANGGAL 📢</span></div>
 
 <h2>📝 INPUT STOCK OPNAME TOKO K792</h2>
 
 <div class="setting">
   <label><b>Pilih Shift:</b></label>
   <select id="pilihShift" onchange="gantiShift()">
-    <option value="shift1">SHIFT 1 - Pagi</option>
-    <option value="shift2">SHIFT 2 - Siang</option>
-    <option value="shift3">SHIFT 3 - Malam</option>
+    <option value="shift1">SHIFT 1 - PAGI</option>
+    <option value="shift2">SHIFT 2 - SIANG</option>
+    <option value="shift3">SHIFT 3 - MALAM</option>
   </select>
   <input type="date" id="tanggalShift" onchange="gantiShift()">
 </div>
 
-<p class="subjudul" id="judulShift">Akhir Pembuka / Akhir Shift 1 - </p>
+<p class="subjudul" id="judulShift">Akhir Pembuka / Akhir SHIFT 1 - PAGI - </p>
 
 <div class="table-wrap">
 <table id="tabelOpname"><thead><tr>
@@ -82,17 +82,17 @@ document.getElementById('tanggalShift').value = '2026-08-13';
 function renderTable(){
   const tbody = document.querySelector('#tabelOpname tbody');
   tbody.innerHTML = '';
-  const key = 'dataOpname_' + currentShift;
-  const dataLama = JSON.parse(localStorage.getItem(key)) || [];
   const tgl = document.getElementById('tanggalShift').value;
-  const namaShift = currentShift === 'shift1' ? 'SHIFT 1 - Pagi' : currentShift === 'shift2' ? 'SHIFT 2 - Siang' : 'SHIFT 3 - Malam';
+  const key = `dataOpname_${currentShift}_${tgl}`;
+  const dataLama = JSON.parse(localStorage.getItem(key)) || [];
+  const namaShift = currentShift === 'shift1'? 'SHIFT 1 - PAGI' : currentShift === 'shift2'? 'SHIFT 2 - SIANG' : 'SHIFT 3 - MALAM';
   document.getElementById('judulShift').innerText = `Akhir Pembuka / Akhir ${namaShift} - ${tgl}`;
 
   dataBarang.forEach(d=>{
     const data = dataLama.find(x => x.no === d.no) || {};
-    const ohVal = data.oh ?? '';
-    const fisikVal = data.fisik ?? '';
-    
+    const ohVal = data.oh?? '';
+    const fisikVal = data.fisik?? '';
+
     tbody.innerHTML += `<tr>
       <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td>${d.nama}</td>
       <td><input type="number" step="0.001" id="oh${d.no}" value="${ohVal}" placeholder="0" oninput="hitung(${d.no})"></td>
@@ -114,7 +114,7 @@ function hitung(no){
   }
   const selisih = (fisik - oh).toFixed(3);
   document.getElementById('selisih'+no).innerText = selisih;
-  
+
   let status = '';
   if(selisih == 0) status = '<span class="selesai">✅</span>';
   else if(selisih < 0) status = `<span class="kurang">(${Math.abs(selisih)})</span>`;
@@ -124,23 +124,24 @@ function hitung(no){
 }
 
 function simpanData(){
-  const key = 'dataOpname_' + currentShift;
+  const tgl = document.getElementById('tanggalShift').value;
+  const key = `dataOpname_${currentShift}_${tgl}`;
   const hasil = dataBarang.map(d=>{
     const oh = parseFloat(document.getElementById('oh'+d.no).value) || 0;
     const fisik = parseFloat(document.getElementById('fisik'+d.no).value) || 0;
     const selisih = fisik - oh;
-    return {...d, oh, fisik, selisih};
+    return {...d, oh, fisik, selisih, tanggal: tgl};
   });
   localStorage.setItem(key, JSON.stringify(hasil));
   localStorage.setItem('judulLaporan', document.getElementById('judulShift').innerText);
-  localStorage.setItem('currentShift', currentShift);
-  alert('Data ' + currentShift.toUpperCase() + ' berhasil disimpan!');
+  alert(`Data ${currentShift.toUpperCase()} tanggal ${tgl} berhasil disimpan!`);
   window.location.href='laporan.html';
 }
 
 function hapusData(){
-  if(confirm(`Yakin mau hapus data ${currentShift.toUpperCase()}?`)){
-    localStorage.removeItem('dataOpname_' + currentShift);
+  const tgl = document.getElementById('tanggalShift').value;
+  if(confirm(`Yakin mau hapus data ${currentShift.toUpperCase()} tanggal ${tgl}?`)){
+    localStorage.removeItem(`dataOpname_${currentShift}_${tgl}`);
     renderTable();
   }
 }
@@ -150,6 +151,5 @@ function gantiShift(){
   renderTable();
 }
 
-// pertama kali load
 renderTable();
 </script></body></html>
