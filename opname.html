@@ -1,111 +1,155 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Input Opname K792</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Input Stock Opname K792 - 3 SHIFT</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>*{font-family:'Poppins'; box-sizing:border-box} body{background:#f4f7f9; padding:10px; margin:0}
 .container{background:white; padding:15px; border-radius:15px; max-width:1200px; margin:auto; overflow-x:auto}
-h2{text-align:center; margin:10px 0 15px}
+h2{text-align:center; margin:10px 0 5px}
+.subjudul{text-align:center; color:#7f8c8d; margin-bottom:10px}
+.marquee{width:100%; background:linear-gradient(90deg, #e74c3c, #f39c12); color:white; padding:10px; border-radius:8px; overflow:hidden; margin-bottom:10px; font-weight:600}
+.marquee span{display:inline-block; white-space:nowrap; animation:jalan 20s linear infinite}
+@keyframes jalan{0%{transform:translateX(100%)} 100%{transform:translateX(-100%)}}
 .btn{padding:10px 15px; border:none; border-radius:8px; margin:5px; cursor:pointer; font-weight:600; font-size:14px}
-.btn-back{background:#95a5a6; color:white}.btn-save{background:#3498db; color:white; width:100%; margin-top:10px}
-table{width:100%; border-collapse:collapse; font-size:12px; min-width:1000px} th,td{border:1px solid #ddd; padding:6px; text-align:center; white-space:nowrap}
-th{background:#3498db; color:white; position:sticky; top:0} 
-input{width:70px; padding:5px; text-align:center; border:1px solid #ccc; border-radius:5px}
-input[readonly]{background:#ecf0f1; border:none}
-td:nth-child(4){text-align:left} /* kolom nama rata kiri */
+.btn-back{background:#95a5a6; color:white}.btn-save{background:#27ae60; color:white; width:100%; margin-top:10px; font-size:16px}
+.btn-hapus{background:#e74c3c; color:white}
+.setting{display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; align-items:center}
+.setting select, .setting input{padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600}
+.table-wrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:12px; min-width:1100px} th,td{border:1px solid #ddd; padding:8px; text-align:center}
+th{background:#e74c3c; color:white; position:sticky; top:0} 
+input{width:80px; padding:6px; text-align:center; border:1px solid #ccc; border-radius:5px}
+td:nth-child(4){text-align:left}
+.selesai{color:green; font-weight:bold}.kurang{color:red}.lebih{color:green}
 </style>
 </head><body><div class="container">
 
 <button class="btn btn-back" onclick="window.location.href='home.html'">⬅️ Kembali ke Home</button>
+<button class="btn btn-hapus" onclick="hapusData()">🗑️ Hapus Shift Ini</button>
 
-<h2>📝 Input Stock Opname K792 - 42 ITEM</h2>
+<div class="marquee"><span>📢 APLIKASI STOCK OPNAME K792 - 3 SHIFT - DATA TERPISAH PER SHIFT 📢</span></div>
 
+<h2>📝 INPUT STOCK OPNAME TOKO K792</h2>
+
+<div class="setting">
+  <label><b>Pilih Shift:</b></label>
+  <select id="pilihShift" onchange="gantiShift()">
+    <option value="shift1">SHIFT 1 - Pagi</option>
+    <option value="shift2">SHIFT 2 - Siang</option>
+    <option value="shift3">SHIFT 3 - Malam</option>
+  </select>
+  <input type="date" id="tanggalShift" onchange="gantiShift()">
+</div>
+
+<p class="subjudul" id="judulShift">Akhir Pembuka / Akhir Shift 1 - </p>
+
+<div class="table-wrap">
 <table id="tabelOpname"><thead><tr>
-<th>No</th><th>Kategori</th><th>Kode</th><th>Nama Barang</th><th>OH Sistem</th><th>Stock Fisik</th><th>Harga</th><th>Selisih Qty</th><th>Selisih Rp</th>
+<th>No</th><th>Kategori</th><th>Kode PLU</th><th>Nama Barang Lengkap</th><th>OH Sistem</th><th>Stock Fisik</th><th>Selisih Qty</th><th>Status</th>
 </tr></thead><tbody></tbody></table>
+</div>
 
-<button class="btn btn-save" onclick="simpanData()">💾 Simpan & Ke Laporan</button>
+<button class="btn btn-save" onclick="simpanData()">💾 SIMPAN DATA SHIFT & LIHAT LAPORAN</button>
 </div><script>
 const dataBarang = [
-{no:1, kat:"KANZLER SII", kode:"417806", nama:"KANZLER SII 240G", oh:10, harga:35000},
-{no:2, kat:"KANZLER SII", kode:"417804", nama:"KANZLER SII 500G", oh:8, harga:65000},
-{no:3, kat:"KANZLER SII", kode:"417805", nama:"KANZLER SII 1KG", oh:5, harga:120000},
-{no:4, kat:"KANZLER SII", kode:"423992", nama:"KANZLER SII CHZ 240G", oh:12, harga:36000},
-{no:5, kat:"KANZLER SII", kode:"435578", nama:"KANZLER SII SPICY 240G", oh:7, harga:35000},
-{no:6, kat:"KANZLER BA", kode:"435736", nama:"KANZLER BA 240G", oh:15, harga:34000},
-{no:7, kat:"KANZLER BA", kode:"465771", nama:"KANZLER BA 500G", oh:9, harga:62000},
-{no:8, kat:"KANZLER BA", kode:"428660", nama:"KANZLER BA 1KG", oh:4, harga:115000},
-{no:9, kat:"KANZLER BA", kode:"428662", nama:"KANZLER BA CHZ 240G", oh:11, harga:35000},
-{no:10, kat:"FIESTA SOSI", kode:"443704", nama:"FIESTA SOSIS AYAM 500G", oh:20, harga:28000},
-{no:11, kat:"FIESTA SOSI", kode:"443705", nama:"FIESTA SOSIS SAPI 500G", oh:18, harga:32000},
-{no:12, kat:"FIESTA NUGGET", kode:"443701", nama:"FIESTA NUGGET 500G", oh:14, harga:30000},
-{no:13, kat:"FIESTA NUGGET", kode:"443702", nama:"FIESTA NUGGET 1KG", oh:6, harga:55000},
-{no:14, kat:"MINYAK", kode:"100101", nama:"BIMOLI 1L", oh:25, harga:18000},
-{no:15, kat:"MINYAK", kode:"100102", nama:"BIMOLI 2L", oh:15, harga:34000},
-{no:16, kat:"MINYAK", kode:"100103", nama:"FILMA 1L", oh:22, harga:17500},
-{no:17, kat:"GULA", kode:"200201", nama:"GULA GULAKU 1KG", oh:30, harga:16000},
-{no:18, kat:"GULA", kode:"200202", nama:"GULA GULAKU 500G", oh:40, harga:8500},
-{no:19, kat:"BERAS", kode:"300301", nama:"BERAS SETRA RAMOS 5KG", oh:12, harga:75000},
-{no:20, kat:"BERAS", kode:"300302", nama:"BERAS SETRA RAMOS 10KG", oh:8, harga:145000},
-{no:21, kat:"TELUR", kode:"400401", nama:"TELUR AYAM 1KG", oh:50, harga:28000},
-{no:22, kat:"SUSU", kode:"500501", nama:"SUSU UHT INDOMILK 1L", oh:24, harga:17000},
-{no:23, kat:"SUSU", kode:"500502", nama:"SUSU UHT FRISIAN 1L", oh:20, harga:18000},
-{no:24, kat:"ROTI", kode:"600601", nama:"ROTI TAWAR SARI ROTI", oh:35, harga:15000},
-{no:25, kat:"ROTI", kode:"600602", nama:"ROTI GANDUM SARI ROTI", oh:25, harga:17000},
-{no:26, kat:"AIR MINERAL", kode:"700701", nama:"AQUA 600ML", oh:100, harga:4000},
-{no:27, kat:"AIR MINERAL", kode:"700702", nama:"AQUA 1.5L", oh:60, harga:8000},
-{no:28, kat:"MIE INSTAN", kode:"800801", nama:"INDOMIE GORENG", oh:80, harga:3500},
-{no:29, kat:"MIE INSTAN", kode:"800802", nama:"INDOMIE KUAH", oh:70, harga:3500},
-{no:30, kat:"SAUS", kode:"900901", nama:"SAUS ABC 340ML", oh:30, harga:12000},
-{no:31, kat:"KECAP", kode:"900902", nama:"KECAP ABC 275ML", oh:28, harga:10000},
-{no:32, kat:"TEPUNG", kode:"1001001", nama:"TEPUNG TERIGU SEGITIGA 1KG", oh:22, harga:14000},
-{no:33, kat:"TEPUNG", kode:"1001002", nama:"TEPUNG TERIGU BOGASARI 1KG", oh:20, harga:13500},
-{no:34, kat:"ECO BAG", kode:"1101", nama:"ECO BAG KECIL", oh:200, harga:2500},
-{no:35, kat:"ECO BAG", kode:"1101102", nama:"ECO BAG BESAR", oh:150, harga:3500},
-{no:36, kat:"ECO BAG", kode:"1101103", nama:"ECO BAG ULANG TAHUN", oh:100, harga:5000},
-{no:37, kat:"SNACK", kode:"1201201", nama:"CHITATO 68G", oh:45, harga:7000},
-{no:38, kat:"SNACK", kode:"1201202", nama:"LAYS 68G", oh:40, harga:8000},
-{no:39, kat:"SNACK", kode:"1201203", nama:"TARO 70G", oh:50, harga:6500},
-{no:40, kat:"MINUMAN", kode:"1301301", nama:"TEH BOTOL 450ML", oh:60, harga:5000},
-{no:41, kat:"MINUMAN", kode:"1301302", nama:"POCARI 500ML", oh:55, harga:7000},
-{no:42, kat:"MINUMAN", kode:"1303", nama:"COCA COLA 390ML", oh:65, harga:6000}
+{no:1, kat:"KANZLER SINGLE", kode:"417806", nama:"KANZLER SINGLE MINI 65 GRAM"},
+{no:2, kat:"KANZLER SINGLE", kode:"417804", nama:"KANZLER SINGLE ORIGINAL 65 GRAM"},
+{no:3, kat:"KANZLER SINGLE", kode:"417805", nama:"KANZLER SINGLE KEJU 65 GRAM"},
+{no:4, kat:"KANZLER SINGLE", kode:"423992", nama:"KANZLER SINGLE HOT 65 GRAM"},
+{no:5, kat:"KANZLER SINGLE", kode:"435578", nama:"KANZLER SINGLE GOCHUJANG 65 GRAM"},
+{no:6, kat:"KANZLER BAKSO", kode:"435736", nama:"KANZLER BAKSO HOT 48 GRAM"},
+{no:7, kat:"KANZLER BAKSO", kode:"465771", nama:"KANZLER BAKSO GOCHUJANG 55 GRAM"},
+{no:8, kat:"KANZLER BAKSO", kode:"428660", nama:"KANZLER BAKSO ORIGINAL 48 GRAM"},
+{no:9, kat:"KANZLER BAKSO", kode:"428662", nama:"KANZLER BAKSO KEJU 48 GRAM"},
+{no:10, kat:"FIESTA SOSIS", kode:"443704", nama:"FIESTA RTG SOSIS SPICY KOREAN 500 GRAM"},
+{no:11, kat:"ECO BAG", kode:"EB001", nama:"ECO BAG ALFAMART"},
+{no:12, kat:"ECO BAG", kode:"EB002", nama:"ECO BAG KECIL"},
+{no:13, kat:"ECO BAG", kode:"EB003", nama:"ECO BAG GEDE"},
+{no:14, kat:"FRESH MILK", kode:"FM001", nama:"SUSU FRESH MILK DIAMOND 1 LITER"},
+{no:15, kat:"FRESH MILK", kode:"FM002", nama:"SUSU FRESH MILK GREENFIELDS 1 LITER"},
+{no:16, kat:"FRESH MILK", kode:"FM003", nama:"SUSU UHT OMELA 1 LITER"},
+{no:17, kat:"LAIN-LAIN", kode:"RAW001", nama:"RAW ICE CUP PLASTIC"},
+{no:18, kat:"LAIN-LAIN", kode:"418605", nama:"RAW HOT BEANSPOT"},
+{no:19, kat:"AIR MINERAL", kode:"422782", nama:"LE MINERAL GALON 15 LITER"},
+{no:20, kat:"AIR MINERAL", kode:"460235", nama:"NPL GALON 15 LITER"},
+{no:21, kat:"GULA PASIR", kode:"401698", nama:"GULA PSM PREMIUM 1 KILOGRAM"},
+{no:22, kat:"GULA PASIR", kode:"405970", nama:"GULA ROSE BRAND TEBU PREMIUM 1 KILOGRAM"},
+{no:23, kat:"GULA PASIR", kode:"466054", nama:"GULA VIGULA KRISTAL PUTIH 1 KILOGRAM"},
+{no:24, kat:"GULA PASIR", kode:"221587", nama:"GULA GULAKU TEBU PREMIUM 1 KILOGRAM"},
+{no:25, kat:"GULA PASIR", kode:"406643", nama:"GULA GMP KRISTAL PUTIH 1 KILOGRAM"}
 ];
 
-const tbody = document.querySelector('#tabelOpname tbody');
-dataBarang.forEach(d=>{
-  tbody.innerHTML += `<tr>
-    <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td>${d.nama}</td>
-    <td><input type="number" id="oh${d.no}" value="${d.oh}" readonly></td>
-    <td><input type="number" id="fisik${d.no}" value="0" oninput="hitung(${d.no})"></td>
-    <td>${d.harga.toLocaleString('id-ID')}</td>
-    <td id="selisih${d.no}">0</td>
-    <td id="selisihRp${d.no}">0</td>
-  </tr>`;
-});
+let currentShift = 'shift1';
+document.getElementById('tanggalShift').value = '2026-08-13';
+
+function renderTable(){
+  const tbody = document.querySelector('#tabelOpname tbody');
+  tbody.innerHTML = '';
+  const key = 'dataOpname_' + currentShift;
+  const dataLama = JSON.parse(localStorage.getItem(key)) || [];
+  const tgl = document.getElementById('tanggalShift').value;
+  const namaShift = currentShift === 'shift1' ? 'SHIFT 1 - Pagi' : currentShift === 'shift2' ? 'SHIFT 2 - Siang' : 'SHIFT 3 - Malam';
+  document.getElementById('judulShift').innerText = `Akhir Pembuka / Akhir ${namaShift} - ${tgl}`;
+
+  dataBarang.forEach(d=>{
+    const data = dataLama.find(x => x.no === d.no) || {};
+    const ohVal = data.oh ?? '';
+    const fisikVal = data.fisik ?? '';
+    
+    tbody.innerHTML += `<tr>
+      <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td>${d.nama}</td>
+      <td><input type="number" step="0.001" id="oh${d.no}" value="${ohVal}" placeholder="0" oninput="hitung(${d.no})"></td>
+      <td><input type="number" step="0.001" id="fisik${d.no}" value="${fisikVal}" placeholder="0" oninput="hitung(${d.no})"></td>
+      <td id="selisih${d.no}">-</td>
+      <td id="status${d.no}">-</td>
+    </tr>`;
+  });
+  dataBarang.forEach(d=>hitung(d.no));
+}
 
 function hitung(no){
-  const oh = parseInt(document.getElementById('oh'+no).value) || 0;
-  const fisik = parseInt(document.getElementById('fisik'+no).value) || 0;
-  const barang = dataBarang.find(b=>b.no===no);
-  const selisih = fisik - oh;
-  const selisihRp = selisih * barang.harga;
+  const oh = parseFloat(document.getElementById('oh'+no).value) || 0;
+  const fisik = parseFloat(document.getElementById('fisik'+no).value) || 0;
+  if(oh === 0 && fisik === 0){
+    document.getElementById('selisih'+no).innerText = '-';
+    document.getElementById('status'+no).innerText = '-';
+    return;
+  }
+  const selisih = (fisik - oh).toFixed(3);
   document.getElementById('selisih'+no).innerText = selisih;
-  document.getElementById('selisihRp'+no).innerText = selisihRp.toLocaleString('id-ID');
+  
+  let status = '';
+  if(selisih == 0) status = '<span class="selesai">✅</span>';
+  else if(selisih < 0) status = `<span class="kurang">(${Math.abs(selisih)})</span>`;
+  else status = `<span class="lebih">(+${selisih})</span>`;
+  document.getElementById('status'+no).innerHTML = status;
   document.getElementById('selisih'+no).style.color = selisih<0?'red':selisih>0?'green':'black';
-  document.getElementById('selisihRp'+no).style.color = selisihRp<0?'red':selisihRp>0?'green':'black';
 }
 
 function simpanData(){
+  const key = 'dataOpname_' + currentShift;
   const hasil = dataBarang.map(d=>{
-    const fisik = parseInt(document.getElementById('fisik'+d.no).value) || 0;
-    const selisih = fisik - d.oh;
-    return {...d, fisik, selisih, selisihRp: selisih * d.harga};
+    const oh = parseFloat(document.getElementById('oh'+d.no).value) || 0;
+    const fisik = parseFloat(document.getElementById('fisik'+d.no).value) || 0;
+    const selisih = fisik - oh;
+    return {...d, oh, fisik, selisih};
   });
-  localStorage.setItem('dataOpname', JSON.stringify(hasil));
+  localStorage.setItem(key, JSON.stringify(hasil));
+  localStorage.setItem('judulLaporan', document.getElementById('judulShift').innerText);
+  localStorage.setItem('currentShift', currentShift);
+  alert('Data ' + currentShift.toUpperCase() + ' berhasil disimpan!');
   window.location.href='laporan.html';
 }
 
-// load data lama kalau ada
-const dataLama = JSON.parse(localStorage.getItem('dataOpname')) || [];
-dataLama.forEach(d=>{
-  const input = document.getElementById('fisik'+d.no);
-  if(input){ input.value = d.fisik; hitung(d.no); }
-});
+function hapusData(){
+  if(confirm(`Yakin mau hapus data ${currentShift.toUpperCase()}?`)){
+    localStorage.removeItem('dataOpname_' + currentShift);
+    renderTable();
+  }
+}
+
+function gantiShift(){
+  currentShift = document.getElementById('pilihShift').value;
+  renderTable();
+}
+
+// pertama kali load
+renderTable();
 </script></body></html>
