@@ -1,216 +1,163 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Laporan Opname K792</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>*{font-family:'Poppins'} body{background:#f4f7f9; padding:10px; margin:0}
-.container{background:white; padding:15px; border-radius:15px; max-width:1300px; margin:auto; overflow-x:auto}
-.btn{padding:10px 15px; border:none; border-radius:8px; margin:5px; cursor:pointer; font-weight:600; font-size:14px; display:inline-block}
-.btn-back{background:#95a5a6; color:white}.btn-print{background:#27ae60; color:white}
-.btn-reset{background:#e74c3c; color:white}.btn-excel{background:#1d6f42; color:white}.btn-gabung{background:#8e44ad; color:white}
-.button-group{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px}
-.setting{display:flex; gap:10px; margin:15px 0; flex-wrap:wrap; align-items:center}
-.setting select,.setting input{padding:8px; border-radius:8px; border:1px solid #ddd; font-weight:600}
-.summary{display:flex; gap:10px; margin:15px 0; flex-wrap:wrap}
-.card{flex:1; min-width:150px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:15px; border-radius:10px; text-align:center}
-.card h3{margin:0; font-size:14px}.card p{margin:5px 0 0; font-size:18px; font-weight:700}
-.filter{margin:10px 0} select{padding:8px; border-radius:8px; border:1px solid #ddd}
-table{width:100%; border-collapse:collapse; font-size:11px; min-width:1200px} th,td{border:1px solid #ddd; padding:6px; text-align:center; white-space:nowrap}
-th{background:#3498db; color:white}.selisih-minus{color:red; font-weight:bold}.selisih-plus{color:green; font-weight:bold}
-.badge{background:#e74c3c; color:white; padding:3px 8px; border-radius:20px; font-size:10px}
-@media print{.btn,.setting,.filter,.button-group{display:none}}
+<style>
+:root{
+  --bg1:#667eea; --bg2:#764ba2; --card:#fff; --text:#2c3e50; --text2:#7f8c8d; --border:#ddd; --hijau:#43e97b; --merah:#ff6b6b
+}
+body.dark{
+  --bg1:#1a1a2e; --bg2:#16213e; --card:#0f3460; --text:#e0e0e0; --text2:#bdbd; --border:#333
+}
+*{font-family:'Poppins'; box-sizing:border-box; transition:0.3s}
+body{background:linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%); padding:15px; margin:0; min-height:100vh}
+.container{background:var(--card); padding:15px; border-radius:20px; max-width:900px; margin:auto; box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+.header{display:flex; justify-content:space-between; align-items:center; margin-bottom:15px}
+h1{color:var(--text); font-size:20px; margin:0}
+.toggle{background:none; border:none; font-size:24px; cursor:pointer}
+input[type=date]{width:100%; padding:12px; margin:8px 0 15px; border-radius:10px; border:1px solid var(--border); font-size:14px; background:var(--card); color:var(--text)}
+.kategori{color:var(--text); font-weight:700; font-size:16px; margin:15px 0 5px; padding:10px; background:var(--border); border-radius:8px}
+table{width:100%; border-collapse:collapse; font-size:12px; overflow-x:auto; display:block}
+th{background:var(--bg1); color:white; padding:8px; text-align:center; white-space:nowrap}
+td{padding:8px; border-bottom:1px solid var(--border); color:var(--text); white-space:nowrap}
+td.kanan{text-align:right}
+.lebih{color:var(--hijau); font-weight:700}
+.kurang{color:var(--merah); font-weight:700}
+.total{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color:white; padding:12px; border-radius:10px; text-align:center; font-weight:700; margin:15px 0}
+.btn{width:100%; padding:14px; margin:8px 0; border-radius:12px; border:none; font-size:16px; font-weight:700; cursor:pointer; color:white}
+.btn-backup{background:linear-gradient(135deg, #fa709a 0%, #fee140 100%)}
+.btn-kembali{background:linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)}
+.kosong{text-align:center; color:var(--text2); padding:20px}
 </style>
 </head><body><div class="container">
 
-<div class="button-group">
-  <button class="btn btn-back" onclick="window.location.href='index.html'">🏠 Menu Utama</button>
-  <button class="btn btn-print" onclick="window.print()">🖨️ Print PDF</button>
-  <button class="btn btn-excel" onclick="exportExcel()">📊 Export Excel</button>
-  <button class="btn btn-gabung" onclick="gabungHarian()">📅 Gabung Per Hari</button>
-  <button class="btn btn-reset" onclick="resetData()">🗑️ Reset</button>
+<div class="header">
+  <h1>📊 Laporan Opname</h1>
+  <button class="toggle" onclick="toggleDark()" id="btnDark">🌙</button>
 </div>
 
-<h2>📊 LAPORAN STOCK OPNAME K792</h2>
+<input type="date" id="tanggal" onchange="loadLaporan()">
 
-<div class="setting">
-  <label><b>Mode Lihat:</b></label>
-  <select id="modeLihat" onchange="toggleMode()">
-    <option value="perShift">Per Shift</option>
-    <option value="perHari">Gabungan Per Hari</option>
-  </select>
+<div id="hasil"></div>
 
-  <div id="settingShift" style="display:flex; gap:10px">
-    <label><b>Pilih Shift:</b></label>
-    <select id="pilihLaporanShift" onchange="loadData()">
-      <option value="shift1">SHIFT 1 - PAGI</option>
-      <option value="shift2">SHIFT 2 - SIANG</option>
-      <option value="shift3">SHIFT 3 - MALAM</option>
-    </select>
-    <input type="date" id="tanggalLaporan" onchange="loadData()">
-  </div>
+<button class="btn btn-backup" onclick="exportWA()">📤 Export ke WA</button>
+<button class="btn btn-kembali" onclick="window.location.href='index.html'">⬅️ Kembali</button>
 
-  <div id="settingHari" style="display:none; gap:10px">
-    <label><b>Pilih Tanggal:</b></label>
-    <input type="date" id="pilihTanggal" onchange="loadDataHarian()">
-  </div>
 </div>
-
-<p id="judulLaporan" style="font-weight:600; font-size:16px"></p>
-
-<div class="filter">
-  <label><b>Filter Kategori: </b></label>
-  <select id="filterKat" onchange="renderTable()">
-    <option value="SEMUA">SEMUA</option>
-  </select>
-</div>
-
-<div class="summary">
-  <div class="card"><h3>Total Item</h3><p id="totalItem">0</p></div>
-  <div class="card"><h3>Selisih Kurang Qty</h3><p id="totalKurang">0</p></div>
-  <div class="card"><h3>Selisih Lebih Qty</h3><p id="totalLebih">0</p></div>
-  <div class="card"><h3>Total Selisih Rp</h3><p id="totalRp">Rp 0</p></div>
-</div>
-
-<div style="overflow-x:auto">
-<table id="tabelLaporan"><thead><tr>
-<th>No</th><th>Kategori</th><th>Kode</th><th>Nama</th><th>Harga</th><th>OH</th><th>Fisik</th><th>Selisih Qty</th><th>Selisih Rp</th><th>Shift</th><th>Status</th>
-</tr></thead><tbody></tbody></table>
-</div>
-</div><script>
-let data = [];
-let mode = 'perShift';
-let currentShift = 'shift1';
-
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('tanggalLaporan').value = today;
-document.getElementById('pilihTanggal').value = today;
-
-function toggleMode(){
-  mode = document.getElementById('modeLihat').value;
-  document.getElementById('settingShift').style.display = mode === 'perShift'? 'flex' : 'none';
-  document.getElementById('settingHari').style.display = mode === 'perHari'? 'flex' : 'none';
-  loadData();
+<script>
+// DARK MODE
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  let mode = document.body.classList.contains('dark')? 'dark' : 'light';
+  localStorage.setItem('theme', mode);
+  document.getElementById('btnDark').innerText = mode === 'dark'? '☀️' : '🌙';
+}
+if(localStorage.getItem('theme') === 'dark'){
+  document.body.classList.add('dark');
+  document.getElementById('btnDark').innerText = '☀️';
 }
 
-function loadData(){
-  if(mode === 'perShift'){
-    currentShift = document.getElementById('pilihLaporanShift').value;
-    const tgl = document.getElementById('tanggalLaporan').value;
-    const key = `dataOpname_${currentShift}_${tgl}`;
-    data = JSON.parse(localStorage.getItem(key)) || [];
-    data = data.map(d => ({...d, shift: currentShift.toUpperCase()}));
-    const judul = localStorage.getItem('judulLaporan') || `LAPORAN ${currentShift.toUpperCase()} - ${tgl}`;
-    document.getElementById('judulLaporan').innerText = judul;
+document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+loadLaporan();
+
+// MASTER OH + HARGA. UDAH GUA ISI DATA MINYAK DARI KAMU
+const masterOH = {
+  // MINYAK
+  '113079':{oh:58, harga:35000}, '451350':{oh:16, harga:28000}, '61132':{oh:48, harga:18000},
+  '195673':{oh:35, harga:17000}, '211141':{oh:4, harga:17000}, '6965':{oh:12, harga:17000},
+  '244111':{oh:72, harga:32000}, '156747':{oh:17, harga:32000}, '192730':{oh:16, harga:32000},
+  '113222':{oh:4, harga:32000}, '195674':{oh:33, harga:32000}, '211378':{oh:1, harga:34000},
+  '121905':{oh:94, harga:32000}, '437794':{oh:0, harga:30000}, '433436':{oh:0, harga:30000},
+  '123332':{oh:40, harga:31000}, '453308':{oh:6, harga:30000}, '45258':{oh:12, harga:30000},
+  '436397':{oh:7, harga:25000},
+  // FROZEN & LAIN. ISI SENDIRI OH & HARGANYA YA
+  '417806':{oh:0, harga:0}, '417804':{oh:0, harga:0}, '417805':{oh:0, harga:0}, '423992':{oh:0, harga:0},
+  '435578':{oh:0, harga:0}, '435736':{oh:0, harga:0}, '465771':{oh:0, harga:0}, '428660':{oh:0, harga:0},
+  '428662':{oh:0, harga:0}, '443704':{oh:0, harga:0}, 'EB001':{oh:0, harga:0}, 'EB002':{oh:0, harga:0},
+  'EB003':{oh:0, harga:0}, 'FM001':{oh:0, harga:0}, 'FM002':{oh:0, harga:0}, 'FM003':{oh:0, harga:0}
+};
+
+function formatRupiah(angka){
+  return new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR', minimumFractionDigits:0}).format(angka);
+}
+
+function loadLaporan(){
+  const tgl = document.getElementById('tanggal').value;
+  const data = JSON.parse(localStorage.getItem(`dataOpname_${tgl}`) || '[]');
+  const div = document.getElementById('hasil');
+
+  if(data.length === 0){
+    div.innerHTML = `<div class="kosong">Belum ada data untuk tanggal ${tgl}</div>`;
+    return;
   }
-  isiKategori();
-  renderTable();
-}
 
-function loadDataHarian(){
-  const tgl = document.getElementById('pilihTanggal').value;
-  data = [];
-  ['shift1','shift2','shift3'].forEach(shift => {
-    const key = `dataOpname_${shift}_${tgl}`;
-    const dataShift = JSON.parse(localStorage.getItem(key)) || [];
-    const dataWithShift = dataShift.map(d => ({...d, shift: shift.toUpperCase()}));
-    data = data.concat(dataWithShift);
+  let grouped = {};
+  let totalSelisih = 0;
+  let totalRupiah = 0;
+
+  data.forEach(item => {
+    if(!grouped[item.kategori]) grouped[item.kategori] = [];
+    grouped[item.kategori].push(item);
   });
-  document.getElementById('judulLaporan').innerText = `LAPORAN GABUNGAN TANGGAL ${tgl}`;
-  isiKategori();
-  renderTable();
-}
 
-function isiKategori(){
-  const filterKat = document.getElementById('filterKat');
-  filterKat.innerHTML = '<option value="SEMUA">SEMUA</option>';
-  [...new Set(data.map(d=>d.kat))].forEach(k=>{
-    filterKat.innerHTML += `<option value="${k}">${k}</option>`
-  });
-}
+  let html = '';
+  for(let kat in grouped){
+    html += `<div class="kategori">📦 ${kat}</div>
+    <table>
+      <tr><th>PLU</th><th>NAMA</th><th>OH</th><th>FISIK</th><th>SELISIH</th><th>RP</th></tr>`;
 
-function renderTable(){
-  const kat = document.getElementById('filterKat').value;
-  const filterData = kat === 'SEMUA'? data : data.filter(d=>d.kat===kat);
-  const tbody = document.querySelector('#tabelLaporan tbody');
-  tbody.innerHTML = '';
-  let totalKurang = 0, totalLebih = 0, totalSelisihRp = 0;
+    grouped[kat].forEach(item => {
+      let oh = masterOH[item.plu]?.oh || 0;
+      let harga = masterOH[item.plu]?.harga || 0;
+      let selisih = item.fisik - oh;
+      let rp = selisih * harga;
+      totalSelisih += selisih;
+      totalRupiah += rp;
 
-  let dataGabungan = [];
-  if(mode === 'perHari'){
-    const map = {};
-    filterData.forEach(d => {
-      if(!map[d.kode]){
-        map[d.kode] = {...d, fisik: 0, oh: 0, selisih: 0, selisihRp: 0, shift: 'GABUNGAN'};
-      }
-      map[d.kode].oh += d.oh;
-      map[d.kode].fisik += d.fisik;
-      map[d.kode].selisih += d.selisih;
-      map[d.kode].selisihRp += d.selisihRp;
+      let classSelisih = selisih > 0? 'lebih' : selisih < 0? 'kurang' : '';
+      let tanda = selisih > 0? '+' : '';
+
+      html += `<tr>
+        <td>${item.plu}</td>
+        <td>${item.nama}</td>
+        <td class="kanan">${oh}</td>
+        <td class="kanan">${item.fisik}</td>
+        <td class="kanan ${classSelisih}">${tanda}${selisih}</td>
+        <td class="kanan ${classSelisih}">${formatRupiah(rp)}</td>
+      </tr>`;
     });
-    dataGabungan = Object.values(map);
-  } else {
-    dataGabungan = filterData;
+    html += `</table>`;
   }
 
-  dataGabungan.forEach((d) => {
-    if(d.selisih < 0) totalKurang += d.selisih;
-    if(d.selisih > 0) totalLebih += d.selisih;
-    totalSelisihRp += d.selisihRp;
+  html = `<div class="total">TOTAL SELISIH: ${totalSelisih} | TOTAL RP: ${formatRupiah(totalRupiah)}</div>` + html;
+  div.innerHTML = html;
+}
 
-    let status = '';
-    if(d.selisih == 0) status = '✅';
-    else if(d.selisih < 0) status = `RUGI`;
-    else status = `LEBIH`;
+// Export ke format WA sama kayak chat kamu
+function exportWA(){
+  const tgl = document.getElementById('tanggal').value;
+  const data = JSON.parse(localStorage.getItem(`dataOpname_${tgl}`) || '[]');
+  if(data.length === 0){alert('Data kosong'); return;}
 
-    tbody.innerHTML += `<tr>
-      <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td style="text-align:left">${d.nama}</td>
-      <td>Rp ${d.harga.toLocaleString('id-ID')}</td>
-      <td>${d.oh.toFixed(3)}</td><td>${d.fisik.toFixed(3)}</td>
-      <td class="${d.selisih < 0? 'selisih-minus' : d.selisih > 0? 'selisih-plus' : ''}">${d.selisih.toFixed(3)}</td>
-      <td class="${d.selisihRp < 0? 'selisih-minus' : d.selisihRp > 0? 'selisih-plus' : ''}">Rp ${d.selisihRp.toLocaleString('id-ID')}</td>
-      <td><span class="badge">${d.shift}</span></td>
-      <td>${status}</td>
-    </tr>`;
+  let text = `Akhir pembuka/akhir shift \n${tgl}\n_Plu / desc / oh / fisik / selisih\n`;
+  let grouped = {};
+  data.forEach(item => {
+    if(!grouped[item.kategori]) grouped[item.kategori] = [];
+    grouped[item.kategori].push(item);
   });
-  document.getElementById('totalItem').innerText = dataGabungan.length;
-  document.getElementById('totalKurang').innerText = totalKurang.toFixed(3);
-  document.getElementById('totalLebih').innerText = totalLebih.toFixed(3);
-  document.getElementById('totalRp').innerText = 'Rp ' + totalSelisihRp.toLocaleString('id-ID');
-  document.getElementById('totalRp').style.color = totalSelisihRp<0?'red':totalSelisihRp>0?'green':'black';
-}
 
-function gabungHarian(){
-  document.getElementById('modeLihat').value = 'perHari';
-  toggleMode();
-}
-
-function resetData(){
-  const tgl = mode === 'perShift'? document.getElementById('tanggalLaporan').value : document.getElementById('pilihTanggal').value;
-  if(mode === 'perShift'){
-    if(confirm(`Yakin mau hapus data ${currentShift.toUpperCase()} tanggal ${tgl}?`)){
-      localStorage.removeItem(`dataOpname_${currentShift}_${tgl}`);
-      loadData();
-    }
-  } else {
-    if(confirm(`Yakin mau hapus SEMUA data 3 shift tanggal ${tgl}?`)){
-      localStorage.removeItem(`dataOpname_shift1_${tgl}`);
-      localStorage.removeItem(`dataOpname_shift2_${tgl}`);
-      localStorage.removeItem(`dataOpname_shift3_${tgl}`);
-      loadDataHarian();
-    }
+  for(let kat in grouped){
+    text += `_*${kat}*_\n`;
+    grouped[kat].forEach(item => {
+      let oh = masterOH[item.plu]?.oh || 0;
+      let selisih = item.fisik - oh;
+      let tanda = selisih > 0? '+' : selisih < 0? '' : '✅';
+      let selisihTxt = selisih === 0? '✅' : tanda + selisih;
+      text += `- ${item.plu} / ${item.nama} /${oh}/${item.fisik}${selisihTxt}\n`;
+    });
+    text += `\n`;
   }
-}
 
-function exportExcel(){
-  if(data.length === 0){ alert('Data kosong!'); return; }
-  let csv = 'No,Kategori,Kode,Nama,Harga,OH,Fisik,Selisih Qty,Selisih Rp,Shift\n';
-  data.forEach(d=>{
-    csv += `${d.no},${d.kat},${d.kode},"${d.nama}",${d.harga},${d.oh},${d.fisik},${d.selisih},${d.selisihRp},${d.shift}\n`;
-  });
-  const tgl = mode === 'perHari'? document.getElementById('pilihTanggal').value : document.getElementById('tanggalLaporan').value;
-  const namaFile = mode === 'perHari'? `Laporan_Gabungan_${tgl}.csv` : `Laporan_${currentShift}_${tgl}.csv`;
-  const blob = new Blob([csv], {type: 'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = namaFile; a.click();
+  navigator.clipboard.writeText(text);
+  alert('✅ Data berhasil di copy! Tinggal paste ke WA');
 }
-
-loadData();
-</script></body></html>
+</script>
+</body></html>
