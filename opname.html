@@ -13,7 +13,7 @@ h2{text-align:center; margin:10px 0 5px}
 .setting{display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; align-items:center}
 .setting select,.setting input{padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600}
 .table-wrap{overflow-x:auto}
-table{width:100%; border-collapse:collapse; font-size:11px; min-width:1300px} th,td{border:1px solid #ddd; padding:6px; text-align:center}
+table{width:100%; border-collapse:collapse; font-size:11px; min-width:1200px} th,td{border:1px solid #ddd; padding:6px; text-align:center}
 th{background:#e74c3c; color:white; position:sticky; top:0}
 input{width:70px; padding:5px; text-align:center; border:1px solid #ccc; border-radius:5px}
 input.harga{width:90px; background:#fffbe6}
@@ -22,8 +22,7 @@ td:nth-child(4){text-align:left}
 </style>
 </head><body><div class="container">
 
-<button class="btn btn-back" onclick="window.location.href='login.html'">⬅️ Kembali</button>
-<button class="btn" style="background:#e74c3c; color:white" onclick="logout()">🚪 Logout</button>
+<button class="btn btn-back" onclick="window.location.href='index.html'">🏠 Menu Utama</button>
 <button class="btn btn-hapus" onclick="hapusData()">🗑️ Hapus Shift Ini</button>
 <button class="btn btn-copy" onclick="copyOHDariShiftSebelumnya()">📋 Copy OH dari Shift Sebelumnya</button>
 
@@ -81,13 +80,6 @@ const dataBarang = [
 
 let currentShift = 'shift1';
 document.getElementById('tanggalShift').value = '2026-08-13';
-
-// CEK LOGIN DULU
-const loginUser = JSON.parse(localStorage.getItem('loginUser'));
-if(!loginUser){
-  alert('Silakan login dulu!');
-  window.location.href = 'login.html';
-}
 
 function renderTable(){
   const tbody = document.querySelector('#tabelOpname tbody');
@@ -149,11 +141,11 @@ function simpanData(){
     const oh = parseFloat(document.getElementById('oh'+d.no).value) || 0;
     const fisik = parseFloat(document.getElementById('fisik'+d.no).value) || 0;
     const selisih = fisik - oh;
-    return {...d, harga, oh, fisik, selisih, selisihRp: selisih*harga, tanggal: tgl, pic: loginUser.user};
+    return {...d, harga, oh, fisik, selisih, selisihRp: selisih*harga, tanggal: tgl};
   });
   localStorage.setItem(key, JSON.stringify(hasil));
-  localStorage.setItem('judulLaporan', `${document.getElementById('judulShift').innerText} - PIC: ${loginUser.user}`);
-  alert(`Data ${currentShift.toUpperCase()} berhasil disimpan oleh ${loginUser.user}!`);
+  localStorage.setItem('judulLaporan', `${document.getElementById('judulShift').innerText}`);
+  alert(`Data ${currentShift.toUpperCase()} berhasil disimpan!`);
   window.location.href='laporan.html';
 }
 
@@ -187,13 +179,6 @@ function copyOHDariShiftSebelumnya(){
 function gantiShift(){
   currentShift = document.getElementById('pilihShift').value;
   renderTable();
-}
-
-function logout(){
-  if(confirm('Yakin mau logout?')){
-    localStorage.removeItem('loginUser');
-    window.location.href = 'login.html';
-  }
 }
 renderTable();
 </script></body></html>
