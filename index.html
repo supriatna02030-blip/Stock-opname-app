@@ -1,12 +1,80 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home K792</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>*{font-family:'Poppins'} body{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); display:flex; justify-content:center; align-items:center; height:100vh; margin:0}
-.container{background:white; padding:40px; border-radius:20px; text-align:center; width:90%; max-width:400px}
-h1{color:#2c3e50} .btn{padding:15px; width:100%; margin:10px 0; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer}
+<style>
+*{font-family:'Poppins'; box-sizing:border-box}
+body{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:15px}
+.container{background:white; padding:30px 25px; border-radius:20px; text-align:center; width:100%; max-width:400px; box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+h1{color:#2c3e50; font-size:22px; margin:0 0 5px}
+.jam{color:#7f8c8d; font-size:13px; margin-bottom:20px; font-weight:600}
+.btn{padding:15px; width:100%; margin:10px 0; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; transition:0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.btn:active{transform:scale(0.97)}
 .btn-opname{background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color:white}
-.btn-laporan{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color:white}</style>
+.btn-laporan{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color:white}
+.btn-backup{background:linear-gradient(135deg, #fa709a 0%, #fee140 100%); color:white}
+.btn-restore{background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color:white}
+.footer{margin-top:20px; font-size:12px; color:#95a5a6; font-weight:600}
+input[type=file]{display:none}
+</style>
 </head><body><div class="container">
+
 <h1>🏪 STOCK OPNAME K792</h1>
+<p class="jam" id="jam"></p>
+
 <button class="btn btn-opname" onclick="window.location.href='opname.html'">📝 Input Opname</button>
 <button class="btn btn-laporan" onclick="window.location.href='laporan.html'">📊 Lihat Laporan</button>
-</div></body></html>
+<button class="btn btn-backup" onclick="backupData()">💾 Backup Data</button>
+<button class="btn btn-restore" onclick="document.getElementById('fileInput').click()">📂 Restore Data</button>
+<input type="file" id="fileInput" accept=".json">
+
+<p class="footer">Versi 1.1 | K792 Depok | 2026</p>
+</div>
+
+<script>
+// Tampilkan jam otomatis
+function updateJam(){
+  document.getElementById('jam').innerText = new Date().toLocaleString('id-ID', {dateStyle:'full', timeStyle:'short'})
+}
+updateJam();
+setInterval(updateJam, 1000);
+
+// Fungsi Backup
+function backupData(){
+  let allData = {};
+  for(let i=0; i<localStorage.length; i++){
+    let key = localStorage.key(i);
+    if(key.startsWith('dataOpname_')) allData[key] = localStorage.getItem(key);
+  }
+  if(Object.keys(allData).length === 0){
+    alert('Data kosong! Belum ada data opname yg diinput');
+    return;
+  }
+  const blob = new Blob([JSON.stringify(allData, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Backup_Opname_K792_'+ new Date().toISOString().split('T')[0] +'.json';
+  a.click();
+  alert('✅ Backup berhasil di download!')
+}
+
+// Fungsi Restore
+document.getElementById('fileInput').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event){
+    try{
+      const data = JSON.parse(event.target.result);
+      if(confirm('Yakin mau restore data? Data lama akan tertimpa')){
+        for(let key in data){
+          localStorage.setItem(key, data[key]);
+        }
+        alert('✅ Restore berhasil! Silahkan buka Laporan');
+      }
+    }catch{
+      alert('❌ File backup tidak valid');
+    }
+  };
+  reader.readAsText(file);
+});
+</script>
+</body></html>
