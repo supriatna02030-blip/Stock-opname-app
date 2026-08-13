@@ -1,80 +1,130 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home K792</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-*{font-family:'Poppins'; box-sizing:border-box}
-body{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:15px}
-.container{background:white; padding:30px 25px; border-radius:20px; text-align:center; width:100%; max-width:400px; box-shadow:0 10px 30px rgba(0,0,0,0.2)}
-h1{color:#2c3e50; font-size:22px; margin:0 0 5px}
-.jam{color:#7f8c8d; font-size:13px; margin-bottom:20px; font-weight:600}
-.btn{padding:15px; width:100%; margin:10px 0; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; transition:0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+:root{
+  --bg1:#667eea; --bg2:#764ba2; --card:#fff; --text:#2c3e50; --text2:#7f8c8d; --stat:#f8f9fa
+}
+body.dark{
+  --bg1:#1a1a2e; --bg2:#16213e; --card:#0f3460; --text:#e0e0e0; --text2:#bdbd; --stat:#16213e
+}
+*{font-family:'Poppins'; box-sizing:border-box; transition:0.3s}
+body{background:linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%); display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:15px}
+.container{background:var(--card); padding:25px 20px; border-radius:20px; text-align:center; width:100%; max-width:400px; box-shadow:0 10px 30px rgba(0,0,0,0.3); position:relative}
+.toggle{position:absolute; top:15px; right:15px; background:none; border:none; font-size:22px; cursor:pointer}
+.logo{width:60px; height:60px; margin-bottom:10px; border-radius:12px}
+h1{color:var(--text); font-size:20px; margin:0 0 5px}
+.jam{color:var(--text2); font-size:13px; margin-bottom:15px; font-weight:600}
+.stat{display:flex; justify-content:space-around; background:var(--stat); padding:12px; border-radius:12px; margin-bottom:15px}
+.stat-box{font-size:12px; color:var(--text)}
+.stat-box b{font-size:16px; display:block; color:#667eea}
+.btn{padding:14px; width:100%; margin:8px 0; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.1)}
 .btn:active{transform:scale(0.97)}
 .btn-opname{background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color:white}
 .btn-laporan{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color:white}
 .btn-backup{background:linear-gradient(135deg, #fa709a 0%, #fee140 100%); color:white}
 .btn-restore{background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color:white}
-.footer{margin-top:20px; font-size:12px; color:#95a5a6; font-weight:600}
+.btn-hapus{background:linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color:white; font-size:13px}
+.footer{margin-top:15px; font-size:11px; color:var(--text2); font-weight:600}
 input[type=file]{display:none}
 </style>
 </head><body><div class="container">
 
-<h1>🏪 STOCK OPNAME K792</h1>
+<button class="toggle" onclick="toggleDark()" id="btnDark">🌙</button>
+
+<img src="https://i.imgur.com/xxxxx.png" class="logo" alt="Logo K792"> <!-- GANTI LINK LOGO KAMU -->
+<h1>STOCK OPNAME K792</h1>
 <p class="jam" id="jam"></p>
+
+<div class="stat">
+  <div class="stat-box"><b id="totalHari">0</b>Hari</div>
+  <div class="stat-box"><b id="totalItem">0</b>Item</div>
+</div>
 
 <button class="btn btn-opname" onclick="window.location.href='opname.html'">📝 Input Opname</button>
 <button class="btn btn-laporan" onclick="window.location.href='laporan.html'">📊 Lihat Laporan</button>
 <button class="btn btn-backup" onclick="backupData()">💾 Backup Data</button>
 <button class="btn btn-restore" onclick="document.getElementById('fileInput').click()">📂 Restore Data</button>
+<button class="btn btn-hapus" onclick="hapusSemua()">🗑️ Hapus Semua Data</button>
 <input type="file" id="fileInput" accept=".json">
 
-<p class="footer">Versi 1.1 | K792 Depok | 2026</p>
+<p class="footer">Versi 1.3 | K792 Depok | 2026</p>
 </div>
 
 <script>
-// Tampilkan jam otomatis
+// DARK MODE
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  let mode = document.body.classList.contains('dark')? 'dark' : 'light';
+  localStorage.setItem('theme', mode);
+  document.getElementById('btnDark').innerText = mode === 'dark'? '☀️' : '🌙';
+}
+// Load tema terakhir
+if(localStorage.getItem('theme') === 'dark'){
+  document.body.classList.add('dark');
+  document.getElementById('btnDark').innerText = '☀️';
+}
+
 function updateJam(){
   document.getElementById('jam').innerText = new Date().toLocaleString('id-ID', {dateStyle:'full', timeStyle:'short'})
 }
-updateJam();
-setInterval(updateJam, 1000);
+updateJam(); setInterval(updateJam, 1000);
 
-// Fungsi Backup
+// Hitung Statistik
+function loadStat(){
+  let hari = 0; let item = 0;
+  for(let i=0; i<localStorage.length; i++){
+    let key = localStorage.key(i);
+    if(key.startsWith('dataOpname_')){
+      hari++;
+      let data = JSON.parse(localStorage.getItem(key) || '[]');
+      item += data.length;
+    }
+  }
+  document.getElementById('totalHari').innerText = hari;
+  document.getElementById('totalItem').innerText = item;
+}
+loadStat();
+
+// Backup
 function backupData(){
   let allData = {};
   for(let i=0; i<localStorage.length; i++){
     let key = localStorage.key(i);
     if(key.startsWith('dataOpname_')) allData[key] = localStorage.getItem(key);
   }
-  if(Object.keys(allData).length === 0){
-    alert('Data kosong! Belum ada data opname yg diinput');
-    return;
-  }
+  if(Object.keys(allData).length === 0){alert('Data kosong!'); return;}
   const blob = new Blob([JSON.stringify(allData, null, 2)], {type: 'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'Backup_Opname_K792_'+ new Date().toISOString().split('T')[0] +'.json';
-  a.click();
-  alert('✅ Backup berhasil di download!')
+  a.click(); alert('✅ Backup berhasil!')
 }
 
-// Fungsi Restore
+// Restore
 document.getElementById('fileInput').addEventListener('change', function(e){
-  const file = e.target.files[0];
-  if(!file) return;
+  const file = e.target.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = function(event){
     try{
       const data = JSON.parse(event.target.result);
-      if(confirm('Yakin mau restore data? Data lama akan tertimpa')){
-        for(let key in data){
-          localStorage.setItem(key, data[key]);
-        }
-        alert('✅ Restore berhasil! Silahkan buka Laporan');
+      if(confirm('Yakin restore? Data lama akan tertimpa')){
+        for(let key in data){localStorage.setItem(key, data[key]);}
+        alert('✅ Restore berhasil!'); loadStat();
       }
-    }catch{
-      alert('❌ File backup tidak valid');
-    }
+    }catch{alert('❌ File tidak valid');}
   };
   reader.readAsText(file);
 });
+
+// Hapus Semua
+function hapusSemua(){
+  if(confirm('YAKIN HAPUS SEMUA DATA OPNAME? Tindakan ini tidak bisa dibatalkan!')){
+    for(let i=localStorage.length-1; i>=0; i--){
+      let key = localStorage.key(i);
+      if(key.startsWith('dataOpname_')) localStorage.removeItem(key);
+    }
+    alert('🗑️ Semua data terhapus'); loadStat();
+  }
+}
 </script>
 </body></html>
