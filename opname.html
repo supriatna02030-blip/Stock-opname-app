@@ -9,7 +9,7 @@ body.dark{
 }
 *{font-family:'Poppins'; box-sizing:border-box; transition:0.3s}
 body{background:linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%); padding:15px; margin:0; min-height:100vh}
-.container{background:var(--card); padding:20px; border-radius:20px; max-width:650px; margin:auto; box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+.container{background:var(--card); padding:20px; border-radius:20px; max-width:600px; margin:auto; box-shadow:0 10px 30px rgba(0,0,0,0.2)}
 .header{display:flex; justify-content:space-between; align-items:center; margin-bottom:15px}
 h1{color:var(--text); font-size:20px; margin:0}
 .toggle{background:none; border:none; font-size:24px; cursor:pointer}
@@ -38,7 +38,6 @@ input[type=date]{width:100%; padding:12px; margin:8px 0 15px; border-radius:10px
 
 </div>
 <script>
-// DARK MODE
 function toggleDark(){
   document.body.classList.toggle('dark');
   let mode = document.body.classList.contains('dark')? 'dark' : 'light';
@@ -50,33 +49,11 @@ if(localStorage.getItem('theme') === 'dark'){
   document.getElementById('btnDark').innerText = '☀️';
 }
 
-// Set tanggal hari ini otomatis
 document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
 
-// MASTER DATA SEMUA ITEM
+// VERSI LAMA: CUMA 16 ITEM
 const masterData = [
-  // KATEGORI MINYAK
-  {kategori:'MINYAK', plu:'113079', nama:'Tropical myk grg pet 2L'},
-  {kategori:'MINYAK', plu:'451350', nama:'Tropical myk grg pet 1,5L'},
-  {kategori:'MINYAK', plu:'61132', nama:'Tropical myk grg pet 1L'},
-  {kategori:'MINYAK', plu:'195673', nama:'Sania mnyk grg pch 1L'},
-  {kategori:'MINYAK', plu:'211141', nama:'Bimoli myk pch grg 1L'},
-  {kategori:'MINYAK', plu:'6965', nama:'Barco myk grg pch 1L'},
-  {kategori:'MINYAK', plu:'244111', nama:'SunCo myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'156747', nama:'Filma myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'192730', nama:'Bimoli myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'113222', nama:'Fortune myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'195674', nama:'Sania myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'211378', nama:'Bimoli myk grg spesial pch 2L'},
-  {kategori:'MINYAK', plu:'121905', nama:'Sovia myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'437794', nama:'Harumnas myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'433436', nama:'Camar myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'123332', nama:'Alfamart myk grg pch 2L'},
-  {kategori:'MINYAK', plu:'453308', nama:'Vipco myk 2L'},
-  {kategori:'MINYAK', plu:'45258', nama:'Merah pth myk 2L'},
-  {kategori:'MINYAK', plu:'436397', nama:'Ikan dorang myk grng kelapa'},
-  
-  // KATEGORI FROZEN FOOD DARI GAMBAR
+  // FROZEN
   {kategori:'FROZEN', plu:'417806', nama:'KANZLER SINGLE'},
   {kategori:'FROZEN', plu:'417804', nama:'KANZLER SINGLE'},
   {kategori:'FROZEN', plu:'417805', nama:'KANZLER SINGLE'},
@@ -87,17 +64,15 @@ const masterData = [
   {kategori:'FROZEN', plu:'428660', nama:'KANZLER BAKSO'},
   {kategori:'FROZEN', plu:'428662', nama:'KANZLER BAKSO'},
   {kategori:'FROZEN', plu:'443704', nama:'FIESTA SOSIS'},
-  
-  // KATEGORI LAIN
-  {kategori:'LAINK', plu:'EB001', nama:'ECO BAG'},
-  {kategori:'LAINK', plu:'EB002', nama:'ECO BAG'},
-  {kategori:'LAINK', plu:'EB003', nama:'ECO BAG'},
-  {kategori:'LAINK', plu:'FM001', nama:'FRESH MILK'},
-  {kategori:'LAINK', plu:'FM002', nama:'FRESH MILK'},
-  {kategori:'LAINK', plu:'FM003', nama:'FRESH MILK'}
+  // LAIN
+  {kategori:'LAIN', plu:'EB001', nama:'ECO BAG'},
+  {kategori:'LAIN', plu:'EB002', nama:'ECO BAG'},
+  {kategori:'LAIN', plu:'EB003', nama:'ECO BAG'},
+  {kategori:'LAIN', plu:'FM001', nama:'FRESH MILK'},
+  {kategori:'LAIN', plu:'FM002', nama:'FRESH MILK'},
+  {kategori:'LAIN', plu:'FM003', nama:'FRESH MILK'}
 ];
 
-// Tampilkan item per kategori
 function loadItem(){
   let html = '';
   let katSekarang = '';
@@ -115,7 +90,6 @@ function loadItem(){
 }
 loadItem();
 
-// Simpan ke localStorage
 function simpanData(){
   const tgl = document.getElementById('tanggal').value;
   let data = [];
