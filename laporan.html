@@ -1,33 +1,81 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Laporan Opname K792</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>*{font-family:'Poppins'; box-sizing:border-box} body{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:10px; margin:0; min-height:100vh}
+<style>
+*{font-family:'Poppins'; box-sizing:border-box}
+body{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:10px; margin:0; min-height:100vh}
 .container{background:white; padding:15px; border-radius:20px; max-width:1200px; margin:auto}
-h2{text-align:center; color:#2c3e50}
-.btn{padding:12px; border:none; border-radius:10px; margin:5px; cursor:pointer; font-weight:600; width:100%}
-.btn-wa{background:linear-gradient(135deg, #25D366, #128C7E); color:white; font-size:16px}
+h2{text-align:center; color:#2c3e50; margin:10px 0}
+
+.btn-group{display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap}
+.btn{padding:12px; border:none; border-radius:10px; cursor:pointer; font-weight:700; flex:1; font-size:14px}
 .btn-back{background:#95a5a6; color:white}
-select,input{width:100%; padding:10px; border-radius:10px; border:1px solid #ccc; margin-bottom:10px; font-weight:600}
-table{width:100%; border-collapse:collapse; font-size:12px; margin-top:10px}
+.btn-print{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color:white}
+.btn-wa{background:linear-gradient(135deg, #25D366, #128C7E); color:white}
+
+input[type=date]{width:100%; padding:10px; border-radius:10px; border:1px solid #ccc; margin-bottom:10px; font-weight:600; font-size:16px}
+
+/* BOX REKAP FOTO KECIL */
+.rekap-foto-box{background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color:white; padding:12px; border-radius:15px; text-align:center; margin-bottom:10px}
+.rekap-foto-box.label{font-size:12px; opacity:0.9}
+.rekap-foto-box.value{font-size:14px; font-weight:700; margin-top:3px}
+
+.summary{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0}
+.card{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:15px; border-radius:15px; text-align:center}
+.card.label{font-size:12px; opacity:0.9}
+.card.value{font-size:22px; font-weight:700; margin-top:5px}
+
+table{width:100%; border-collapse:collapse; font-size:11px; margin-top:10px}
 th,td{border:1px solid #ddd; padding:6px; text-align:center}
 th{background:#e74c3c; color:white; position:sticky; top:0}
 .rugi{color:red; font-weight:bold}.lebih{color:green; font-weight:bold}.selesai{color:green}
 .total{background:#f39c12; color:white; font-weight:bold}
+
+@media print {
+  body{background:white}
+.btn-group, input[type=date]{display:none}
+.container{box-shadow:none; padding:5px}
+}
 </style></head><body><div class="container">
-<h2>📊 LAPORAN OPNAME K792</h2>
-<p style="text-align:center" id="judul"></p>
+
+<div class="btn-group">
+  <button class="btn btn-back" onclick="window.location.href='opname.html'">⬅️ Kembali Input</button>
+  <button class="btn btn-print" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+</div>
+
+<h2>📊 Laporan Stock Opname K792</h2>
+<p style="text-align:center; font-size:14px" id="judulWaktu"></p>
+
 <input type="date" id="tanggalLaporan" onchange="loadLaporan()">
 
+<!-- INI BOX REKAP FOTO KECIL DI ATAS -->
+<div class="rekap-foto-box">
+  <div class="label">📷 Rekap Foto</div>
+  <div class="value" id="rekapFoto">Belum Ada</div>
+</div>
+
+<div class="summary">
+  <div class="card"><div class="label">Total Item</div><div class="value" id="totalItem">0</div></div>
+  <div class="card"><div class="label">Selisih Kurang</div><div class="value" id="selisihKurang">0</div></div>
+  <div class="card"><div class="label">Selisih Lebih</div><div class="value" id="selisihLebih">0</div></div>
+  <div class="card"><div class="label">Total Selisih Rp</div><div class="value" id="totalSelisihRp">Rp 0</div></div>
+</div>
+
 <button class="btn btn-wa" onclick="exportWA()">📤 Export ke WA</button>
-<button class="btn btn-back" onclick="window.location.href='index.html'">⬅️ Kembali</button>
 
 <div id="hasil"></div>
-</div><script>
+</div>
+
+<script>
 document.getElementById('tanggalLaporan').value = new Date().toISOString().split('T')[0];
 loadLaporan();
 
 function loadLaporan(){
   const tgl = document.getElementById('tanggalLaporan').value;
-  document.getElementById('judul').innerText = `Laporan Tanggal: ${tgl}`;
+  document.getElementById('judulWaktu').innerText = `Tanggal: ${new Date().toLocaleString('id-ID')}`;
+  
+  // CEK APAKAH ADA FOTO REKAP DI LOCALSTORAGE
+  const adaFoto = localStorage.getItem(`fotoRekap_${tgl}`);
+  document.getElementById('rekapFoto').innerText = adaFoto? '✅ Sudah Upload' : '❌ Belum Ada';
   
   let semuaData = [];
   ['shift1','shift2','shift3'].forEach(shift=>{
@@ -41,22 +89,30 @@ function loadLaporan(){
     return;
   }
 
-  // Gabungkan per barang, ambil yg shift paling akhir yg ada fisiknya
   let gabungan = {};
-  semuaData.forEach(d=>{
-    if(!gabungan[d.no] || d.fisik > 0) gabungan[d.no] = d;
-  });
+  semuaData.forEach(d=>{ if(!gabungan[d.no] || d.fisik > 0) gabungan[d.no] = d; });
   let dataFinal = Object.values(gabungan);
 
-  let html = `<table><thead><tr>
-  <th>No</th><th>Kategori</th><th>Nama</th><th>Harga</th><th>OH</th><th>Fisik</th><th>Selisih</th><th>Selisih Rp</th><th>Status</th>
-  </tr></thead><tbody>`;
-  
-  let totalRp = 0;
+  let kurang = 0, lebih = 0, totalRp = 0;
   dataFinal.forEach(d=>{
     const selisihRp = d.selisih * d.harga;
     totalRp += selisihRp;
-    let status = d.selisih==0?'<span class="selesai">✅</span>':d.selisih<0?'<span class="rugi">RUGI</span>':'<span class="lebih">LEBIH</span>';
+    if(d.selisih < 0) kurang += d.selisih;
+    if(d.selisih > 0) lebih += d.selisih;
+  });
+
+  document.getElementById('totalItem').innerText = dataFinal.length;
+  document.getElementById('selisihKurang').innerText = kurang;
+  document.getElementById('selisihLebih').innerText = lebih;
+  document.getElementById('totalSelisihRp').innerText = `Rp ${totalRp.toLocaleString('id-ID')}`;
+
+  let html = `<table><thead><tr>
+  <th>No</th><th>Kat</th><th>Nama</th><th>Harga</th><th>OH</th><th>Fisik</th><th>Sel</th><th>Sel Rp</th><th>Status</th>
+  </tr></thead><tbody>`;
+  
+  dataFinal.forEach(d=>{
+    const selisihRp = d.selisih * d.harga;
+    let status = d.selisih==0?'✅':d.selisih<0?'<span class="rugi">RUGI</span>':'<span class="lebih">LEBIH</span>';
     html += `<tr>
       <td>${d.no}</td><td>${d.kat}</td><td style="text-align:left">${d.nama}</td>
       <td>Rp ${d.harga.toLocaleString('id-ID')}</td>
@@ -66,15 +122,14 @@ function loadLaporan(){
       <td>${status}</td>
     </tr>`;
   });
-  html += `<tr class="total"><td colspan="7">TOTAL SELISIH RP</td><td colspan="2">Rp ${totalRp.toLocaleString('id-ID')}</td></tr>`;
+  html += `<tr class="total"><td colspan="7">TOTAL SELISIH RP</td><td colspan="2">${document.getElementById('totalSelisihRp').innerText}</td></tr>`;
   html += `</tbody></table>`;
   document.getElementById('hasil').innerHTML = html;
 }
 
 function exportWA(){
   const tgl = document.getElementById('tanggalLaporan').value;
-  let txt = `*LAPORAN STOCK OPNAME K792*\nTanggal: ${tgl}\n\n`;
-  txt += document.getElementById('hasil').innerText;
+  let txt = `*LAPORAN STOCK OPNAME K792*\nTanggal: ${tgl}\nRekap Foto: ${document.getElementById('rekapFoto').innerText}\nTotal Item: ${document.getElementById('totalItem').innerText}\nSelisih Kurang: ${document.getElementById('selisihKurang').innerText}\nSelisih Lebih: ${document.getElementById('selisihLebih').innerText}\nTotal Selisih Rp: ${document.getElementById('totalSelisihRp').innerText}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
 }
 </script></body></html>
