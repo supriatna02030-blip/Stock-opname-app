@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan SO K792</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>*{font-family:'Poppins'} body{background:#f4f7f9; padding:15px} 
+.container{background:white; padding:20px; border-radius:15px; max-width:1200px; margin:auto}
+.btn-back{padding:10px 15px; background:#95a5a6; color:white; border:none; border-radius:8px; margin-bottom:15px}
+.btn-aksi{padding:12px; width:48%; border:none; border-radius:10px; color:white; margin:5px 1%}
+.btn-pdf{background:#e74c3c} .btn-wa{background:#25D366}</style>
+</head><body><div class="container">
+<button class="btn-back" onclick="window.location.href='home.html'">⬅️ Kembali ke Home</button>
+<h2>📊 Dashboard & Laporan</h2><div id="hasilLaporan"></div>
+<button class="btn-aksi btn-pdf" onclick="exportPDF()">📄 Export PDF</button>
+<button class="btn-aksi btn-wa" onclick="kirimWA()">📱 Kirim ke WA</button>
+</div><script>
+const data = JSON.parse(localStorage.getItem('dataOpname')) || [];
+let html = '<table style="width:100%; border-collapse:collapse"><tr><th>Nama</th><th>Sistem</th><th>Fisik</th><th>Selisih</th></tr>';
+data.forEach(d => { html += `<tr><td>${d.nama}</td><td>${d.sistem}</td><td>${d.fisik}</td><td>${d.selisih}</td></tr>` });
+html += '</table>'; document.getElementById('hasilLaporan').innerHTML = html;
+
+function exportPDF(){ const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.text("Laporan SO K792", 10, 10); doc.save("Laporan-SO.pdf"); }
+function kirimWA(){ window.open('https://wa.me/?text=Laporan SO K792 sudah selesai'); }
+</script></body></html>
