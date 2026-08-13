@@ -1,108 +1,221 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Input Opname K792</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg1:#667eea; --bg2:#764ba2; --card:#fff; --text:#2c3e50; --text2:#7f8c8d; --border:#ddd
-}
-body.dark{
-  --bg1:#1a1a2e; --bg2:#16213e; --card:#0f3460; --text:#e0e0e0; --text2:#bdbd; --border:#333
-}
-*{font-family:'Poppins'; box-sizing:border-box; transition:0.3s}
-body{background:linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%); padding:15px; margin:0; min-height:100vh}
-.container{background:var(--card); padding:20px; border-radius:20px; max-width:600px; margin:auto; box-shadow:0 10px 30px rgba(0,0,0,0.2)}
-.header{display:flex; justify-content:space-between; align-items:center; margin-bottom:15px}
-h1{color:var(--text); font-size:20px; margin:0}
-.toggle{background:none; border:none; font-size:24px; cursor:pointer}
-input[type=date]{width:100%; padding:12px; margin:8px 0 15px; border-radius:10px; border:1px solid var(--border); font-size:14px; background:var(--card); color:var(--text)}
-.kategori{color:var(--text); font-weight:700; font-size:15px; margin:15px 0 5px; padding:8px; background:var(--border); border-radius:8px}
-.item{background:var(--card); border:1px solid var(--border); padding:12px; border-radius:12px; margin:8px 0; display:flex; justify-content:space-between; align-items:center}
-.item b{color:var(--text); font-size:13px; font-weight:600}
-.item input{width:90px; padding:8px; border-radius:8px; border:1px solid var(--border); text-align:center; background:var(--card); color:var(--text)}
-.btn{width:100%; padding:14px; margin:8px 0; border-radius:12px; border:none; font-size:16px; font-weight:700; cursor:pointer; color:white}
-.btn-simpan{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)}
-.btn-kembali{background:linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)}
+<title>Input Stock Opname K792 - 3 SHIFT</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>*{font-family:'Poppins'; box-sizing:border-box} body{background:#f4f7f9; padding:10px; margin:0}
+.container{background:white; padding:15px; border-radius:15px; max-width:1300px; margin:auto; overflow-x:auto}
+h2{text-align:center; margin:10px 0 5px}
+.subjudul{text-align:center; color:#7f8c8d; margin-bottom:10px}
+.marquee{width:100%; background:linear-gradient(90deg, #e74c3c, #f39c12); color:white; padding:10px; border-radius:8px; overflow:hidden; margin-bottom:10px; font-weight:600}
+.marquee span{display:inline-block; white-space:nowrap; animation:jalan 20s linear infinite}
+@keyframes jalan{0%{transform:translateX(100%)} 100%{transform:translateX(-100%)}}
+.btn{padding:10px 15px; border:none; border-radius:8px; margin:5px; cursor:pointer; font-weight:600; font-size:14px}
+.btn-back{background:#95a5a6; color:white}.btn-save{background:#27ae60; color:white; width:100%; margin-top:10px; font-size:16px}
+.btn-hapus{background:#e74c3c; color:white}.btn-copy{background:#3498db; color:white}
+.setting{display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; align-items:center}
+.setting select,.setting input{padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600}
+.table-wrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:11px; min-width:1300px} th,td{border:1px solid #ddd; padding:6px; text-align:center}
+th{background:#e74c3c; color:white; position:sticky; top:0}
+input{width:70px; padding:5px; text-align:center; border:1px solid #ccc; border-radius:5px}
+input.harga{width:90px; background:#fffbe6}
+td:nth-child(4){text-align:left}
+.selesai{color:green; font-weight:bold}.kurang{color:red}.lebih{color:green}
 </style>
 </head><body><div class="container">
 
-<div class="header">
-  <h1>📝 Input Opname K792</h1>
-  <button class="toggle" onclick="toggleDark()" id="btnDark">🌙</button>
+<button class="btn btn-back" onclick="window.location.href='login.html'">⬅️ Kembali</button>
+<button class="btn" style="background:#e74c3c; color:white" onclick="logout()">🚪 Logout</button>
+<button class="btn btn-hapus" onclick="hapusData()">🗑️ Hapus Shift Ini</button>
+<button class="btn btn-copy" onclick="copyOHDariShiftSebelumnya()">📋 Copy OH dari Shift Sebelumnya</button>
+
+<div class="marquee"><span>📢 APLIKASI STOCK OPNAME K792 - 3 SHIFT - ADA HITUNGAN SELISIH RP 📢</span></div>
+
+<h2>📝 INPUT STOCK OPNAME TOKO K792</h2>
+
+<div class="setting">
+  <label><b>Pilih Shift:</b></label>
+  <select id="pilihShift" onchange="gantiShift()">
+    <option value="shift1">SHIFT 1 - PAGI</option>
+    <option value="shift2">SHIFT 2 - SIANG</option>
+    <option value="shift3">SHIFT 3 - MALAM</option>
+  </select>
+  <input type="date" id="tanggalShift" onchange="gantiShift()">
 </div>
 
-<input type="date" id="tanggal">
+<p class="subjudul" id="judulShift">Akhir Pembuka / Akhir SHIFT 1 - PAGI - </p>
 
-<div id="listItem"></div>
-
-<button class="btn btn-simpan" onclick="simpanData()">💾 Simpan Data</button>
-<button class="btn btn-kembali" onclick="window.location.href='index.html'">⬅️ Kembali</button>
-
+<div class="table-wrap">
+<table id="tabelOpname"><thead><tr>
+<th>No</th><th>Kategori</th><th>Kode</th><th>Nama Barang</th><th>Harga</th><th>OH</th><th>Fisik</th><th>Selisih Qty</th><th>Selisih Rp</th><th>Status</th>
+</tr></thead><tbody></tbody></table>
 </div>
-<script>
-function toggleDark(){
-  document.body.classList.toggle('dark');
-  let mode = document.body.classList.contains('dark')? 'dark' : 'light';
-  localStorage.setItem('theme', mode);
-  document.getElementById('btnDark').innerText = mode === 'dark'? '☀️' : '🌙';
-}
-if(localStorage.getItem('theme') === 'dark'){
-  document.body.classList.add('dark');
-  document.getElementById('btnDark').innerText = '☀️';
-}
 
-document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+<button class="btn btn-save" onclick="simpanData()">💾 SIMPAN DATA SHIFT & LIHAT LAPORAN</button>
+</div><script>
+const dataBarang = [
+{no:1, kat:"KANZLER SINGLE", kode:"417806", nama:"KANZLER SINGLE MINI 65 GRAM", harga:18500},
+{no:2, kat:"KANZLER SINGLE", kode:"417804", nama:"KANZLER SINGLE ORIGINAL 65 GRAM", harga:18500},
+{no:3, kat:"KANZLER SINGLE", kode:"417805", nama:"KANZLER SINGLE KEJU 65 GRAM", harga:18500},
+{no:4, kat:"KANZLER SINGLE", kode:"423992", nama:"KANZLER SINGLE HOT 65 GRAM", harga:18500},
+{no:5, kat:"KANZLER SINGLE", kode:"435578", nama:"KANZLER SINGLE GOCHUJANG 65 GRAM", harga:19500},
+{no:6, kat:"KANZLER BAKSO", kode:"435736", nama:"KANZLER BAKSO HOT 48 GRAM", harga:15500},
+{no:7, kat:"KANZLER BAKSO", kode:"465771", nama:"KANZLER BAKSO GOCHUJANG 55 GRAM", harga:16500},
+{no:8, kat:"KANZLER BAKSO", kode:"428660", nama:"KANZLER BAKSO ORIGINAL 48 GRAM", harga:15500},
+{no:9, kat:"KANZLER BAKSO", kode:"428662", nama:"KANZLER BAKSO KEJU 48 GRAM", harga:15500},
+{no:10, kat:"FIESTA SOSIS", kode:"443704", nama:"FIESTA RTG SOSIS SPICY KOREAN 500 GRAM", harga:42000},
 
-// VERSI LAMA: CUMA 16 ITEM
-const masterData = [
-  // FROZEN
-  {kategori:'FROZEN', plu:'417806', nama:'KANZLER SINGLE'},
-  {kategori:'FROZEN', plu:'417804', nama:'KANZLER SINGLE'},
-  {kategori:'FROZEN', plu:'417805', nama:'KANZLER SINGLE'},
-  {kategori:'FROZEN', plu:'423992', nama:'KANZLER SINGLE'},
-  {kategori:'FROZEN', plu:'435578', nama:'KANZLER SINGLE'},
-  {kategori:'FROZEN', plu:'435736', nama:'KANZLER BAKSO'},
-  {kategori:'FROZEN', plu:'465771', nama:'KANZLER BAKSO'},
-  {kategori:'FROZEN', plu:'428660', nama:'KANZLER BAKSO'},
-  {kategori:'FROZEN', plu:'428662', nama:'KANZLER BAKSO'},
-  {kategori:'FROZEN', plu:'443704', nama:'FIESTA SOSIS'},
-  // LAIN
-  {kategori:'LAIN', plu:'EB001', nama:'ECO BAG'},
-  {kategori:'LAIN', plu:'EB002', nama:'ECO BAG'},
-  {kategori:'LAIN', plu:'EB003', nama:'ECO BAG'},
-  {kategori:'LAIN', plu:'FM001', nama:'FRESH MILK'},
-  {kategori:'LAIN', plu:'FM002', nama:'FRESH MILK'},
-  {kategori:'LAIN', plu:'FM003', nama:'FRESH MILK'}
+// INI ITEM MINYAK BARU 19 BARIS
+{no:11, kat:"MINYAK", kode:"113079", nama:"Tropical myk grg pet 2L", harga:35000, oh:58},
+{no:12, kat:"MINYAK", kode:"451350", nama:"Tropical myk grg pet 1,5L", harga:28000, oh:16},
+{no:13, kat:"MINYAK", kode:"61132", nama:"Tropical myk grg pet 1L", harga:18000, oh:48},
+{no:14, kat:"MINYAK", kode:"195673", nama:"Sania mnyk grg pch 1L", harga:17000, oh:35},
+{no:15, kat:"MINYAK", kode:"211141", nama:"Bimoli myk pch grg 1L", harga:17000, oh:4},
+{no:16, kat:"MINYAK", kode:"6965", nama:"Barco myk grg pch 1L", harga:17000, oh:12},
+{no:17, kat:"MINYAK", kode:"244111", nama:"SunCo myk grg pch 2L", harga:32000, oh:72},
+{no:18, kat:"MINYAK", kode:"156747", nama:"Filma myk grg pch 2L", harga:32000, oh:17},
+{no:19, kat:"MINYAK", kode:"192730", nama:"Bimoli myk grg pch 2L", harga:32000, oh:16},
+{no:20, kat:"MINYAK", kode:"113222", nama:"Fortune myk grg pch 2L", harga:32000, oh:4},
+{no:21, kat:"MINYAK", kode:"195674", nama:"Sania myk grg pch 2L", harga:32000, oh:33},
+{no:22, kat:"MINYAK", kode:"211378", nama:"Bimoli myk grg spesial pch 2L", harga:34000, oh:1},
+{no:23, kat:"MINYAK", kode:"121905", nama:"Sovia myk grg pch 2L", harga:32000, oh:94},
+{no:24, kat:"MINYAK", kode:"437794", nama:"Harumnas myk grg pch 2L", harga:30000, oh:0},
+{no:25, kat:"MINYAK", kode:"433436", nama:"Camar myk grg pch 2L", harga:30000, oh:0},
+{no:26, kat:"MINYAK", kode:"123332", nama:"Alfamart myk grg pch 2L", harga:31000, oh:40},
+{no:27, kat:"MINYAK", kode:"453308", nama:"Vipco myk 2L", harga:30000, oh:6},
+{no:28, kat:"MINYAK", kode:"45258", nama:"Merah pth myk 2L", harga:30000, oh:12},
+{no:29, kat:"MINYAK", kode:"436397", nama:"Ikan dorang myk grng kelapa", harga:25000, oh:7},
+
+{no:30, kat:"ECO BAG", kode:"EB001", nama:"ECO BAG ALFAMART", harga:3000},
+{no:31, kat:"ECO BAG", kode:"EB002", nama:"ECO BAG KECIL", harga:2000},
+{no:32, kat:"ECO BAG", kode:"EB003", nama:"ECO BAG GEDE", harga:5000},
+{no:33, kat:"FRESH MILK", kode:"FM001", nama:"SUSU FRESH MILK DIAMOND 1 LITER", harga:26000},
+{no:34, kat:"FRESH MILK", kode:"FM002", nama:"SUSU FRESH MILK GREENFIELDS 1 LITER", harga:28000},
+{no:35, kat:"FRESH MILK", kode:"FM003", nama:"SUSU UHT OMELA 1 LITER", harga:24000},
+{no:36, kat:"LAIN-LAIN", kode:"RAW001", nama:"RAW ICE CUP PLASTIC", harga:500},
+{no:37, kat:"LAIN-LAIN", kode:"418605", nama:"RAW HOT BEANSPOT", harga:0},
+{no:38, kat:"AIR MINERAL", kode:"422782", nama:"LE MINERAL GALON 15 LITER", harga:22000},
+{no:39, kat:"AIR MINERAL", kode:"460235", nama:"NPL GALON 15 LITER", harga:21000},
+{no:40, kat:"GULA PASIR", kode:"401698", nama:"GULA PSM PREMIUM 1 KILOGRAM", harga:16000},
+{no:41, kat:"GULA PASIR", kode:"405970", nama:"GULA ROSE BRAND TEBU PREMIUM 1 KILOGRAM", harga:16500},
+{no:42, kat:"GULA PASIR", kode:"466054", nama:"GULA VIGULA KRISTAL PUTIH 1 KILOGRAM", harga:15800},
+{no:43, kat:"GULA PASIR", kode:"221587", nama:"GULA GULAKU TEBU PREMIUM 1 KILOGRAM", harga:16200},
+{no:44, kat:"GULA PASIR", kode:"406643", nama:"GULA GMP KRISTAL PUTIH 1 KILOGRAM", harga:15900}
 ];
 
-function loadItem(){
-  let html = '';
-  let katSekarang = '';
-  masterData.forEach(item => {
-    if(katSekarang!== item.kategori){
-      katSekarang = item.kategori;
-      html += `<div class="kategori">📦 ${katSekarang}</div>`;
-    }
-    html += `<div class="item">
-      <b>${item.plu} - ${item.nama}</b>
-      <input type="number" id="fisik_${item.plu}" placeholder="0" min="0">
-    </div>`;
-  });
-  document.getElementById('listItem').innerHTML = html;
+let currentShift = 'shift1';
+document.getElementById('tanggalShift').value = '2026-08-13';
+
+// CEK LOGIN DULU
+const loginUser = JSON.parse(localStorage.getItem('loginUser'));
+if(!loginUser){
+  alert('Silakan login dulu!');
+  window.location.href = 'login.html';
 }
-loadItem();
+
+function renderTable(){
+  const tbody = document.querySelector('#tabelOpname tbody');
+  tbody.innerHTML = '';
+  const tgl = document.getElementById('tanggalShift').value;
+  const key = `dataOpname_${currentShift}_${tgl}`;
+  const dataLama = JSON.parse(localStorage.getItem(key)) || [];
+  const namaShift = currentShift === 'shift1'? 'SHIFT 1 - PAGI' : currentShift === 'shift2'? 'SHIFT 2 - SIANG' : 'SHIFT 3 - MALAM';
+  document.getElementById('judulShift').innerText = `Akhir Pembuka / Akhir ${namaShift} - ${tgl}`;
+
+  dataBarang.forEach(d=>{
+    const data = dataLama.find(x => x.no === d.no) || {};
+    const ohVal = data.oh ?? d.oh ?? ''; // kalau ada oh default di dataBarang
+    const fisikVal = data.fisik?? '';
+    const hargaVal = data.harga?? d.harga;
+
+    tbody.innerHTML += `<tr>
+      <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td>${d.nama}</td>
+      <td><input type="number" class="harga" id="harga${d.no}" value="${hargaVal}" oninput="hitung(${d.no})"></td>
+      <td><input type="number" step="0.001" id="oh${d.no}" value="${ohVal}" placeholder="0" oninput="hitung(${d.no})"></td>
+      <td><input type="number" step="0.001" id="fisik${d.no}" value="${fisikVal}" placeholder="0" oninput="hitung(${d.no})"></td>
+      <td id="selisih${d.no}">-</td>
+      <td id="selisihRp${d.no}">-</td>
+      <td id="status${d.no}">-</td>
+    </tr>`;
+  });
+  dataBarang.forEach(d=>hitung(d.no));
+}
+
+function hitung(no){
+  const harga = parseFloat(document.getElementById('harga'+no).value) || 0;
+  const oh = parseFloat(document.getElementById('oh'+no).value) || 0;
+  const fisik = parseFloat(document.getElementById('fisik'+no).value) || 0;
+  if(oh === 0 && fisik === 0){
+    document.getElementById('selisih'+no).innerText = '-';
+    document.getElementById('selisihRp'+no).innerText = '-';
+    document.getElementById('status'+no).innerText = '-';
+    return;
+  }
+  const selisih = fisik - oh;
+  const selisihRp = selisih * harga;
+  document.getElementById('selisih'+no).innerText = selisih.toFixed(3);
+  document.getElementById('selisihRp'+no).innerText = 'Rp ' + selisihRp.toLocaleString('id-ID');
+
+  let status = '';
+  if(selisih == 0) status = '<span class="selesai">✅</span>';
+  else if(selisih < 0) status = `<span class="kurang">RUGI</span>`;
+  else status = `<span class="lebih">LEBIH</span>`;
+  document.getElementById('status'+no).innerHTML = status;
+  document.getElementById('selisih'+no).style.color = selisih<0?'red':selisih>0?'green':'black';
+  document.getElementById('selisihRp'+no).style.color = selisihRp<0?'red':selisihRp>0?'green':'black';
+}
 
 function simpanData(){
-  const tgl = document.getElementById('tanggal').value;
-  let data = [];
-  masterData.forEach(item => {
-    let fisik = document.getElementById(`fisik_${item.plu}`).value;
-    if(fisik!== '' && fisik > 0){
-      data.push({plu:item.plu, nama:item.nama, kategori:item.kategori, fisik:parseInt(fisik)});
-    }
+  const tgl = document.getElementById('tanggalShift').value;
+  const key = `dataOpname_${currentShift}_${tgl}`;
+  const hasil = dataBarang.map(d=>{
+    const harga = parseFloat(document.getElementById('harga'+d.no).value) || 0;
+    const oh = parseFloat(document.getElementById('oh'+d.no).value) || 0;
+    const fisik = parseFloat(document.getElementById('fisik'+d.no).value) || 0;
+    const selisih = fisik - oh;
+    return {...d, harga, oh, fisik, selisih, selisihRp: selisih*harga, tanggal: tgl, pic: loginUser.user};
   });
-  if(data.length === 0){alert('Isi minimal 1 item dulu bro'); return;}
-  localStorage.setItem(`dataOpname_${tgl}`, JSON.stringify(data));
-  alert(`✅ Data ${tgl} berhasil disimpan! Total ${data.length} item`);
-  window.location.href = 'index.html';
+  localStorage.setItem(key, JSON.stringify(hasil));
+  localStorage.setItem('judulLaporan', `${document.getElementById('judulShift').innerText} - PIC: ${loginUser.user}`);
+  alert(`Data ${currentShift.toUpperCase()} berhasil disimpan oleh ${loginUser.user}!`);
+  window.location.href='laporan.html';
 }
-</script>
-</body></html>
+
+function hapusData(){
+  const tgl = document.getElementById('tanggalShift').value;
+  if(confirm(`Yakin mau hapus data ${currentShift.toUpperCase()} tanggal ${tgl}?`)){
+    localStorage.removeItem(`dataOpname_${currentShift}_${tgl}`);
+    renderTable();
+  }
+}
+
+function copyOHDariShiftSebelumnya(){
+  const tgl = document.getElementById('tanggalShift').value;
+  let shiftSebelumnya = '';
+  if(currentShift === 'shift2') shiftSebelumnya = 'shift1';
+  if(currentShift === 'shift3') shiftSebelumnya = 'shift2';
+  if(shiftSebelumnya === ''){ alert('Shift 1 tidak bisa copy'); return; }
+  const keySebelumnya = `dataOpname_${shiftSebelumnya}_${tgl}`;
+  const dataSebelumnya = JSON.parse(localStorage.getItem(keySebelumnya)) || [];
+  if(dataSebelumnya.length === 0){ alert(`Data ${shiftSebelumnya.toUpperCase()} belum ada`); return; }
+  if(confirm(`Copy OH dari ${shiftSebelumnya.toUpperCase()}?`)){
+    dataSebelumnya.forEach(d => {
+      document.getElementById('oh'+d.no).value = d.fisik;
+      document.getElementById('fisik'+d.no).value = '';
+      hitung(d.no);
+    });
+    alert('Berhasil di copy!');
+  }
+}
+
+function gantiShift(){
+  currentShift = document.getElementById('pilihShift').value;
+  renderTable();
+}
+
+function logout(){
+  if(confirm('Yakin mau logout?')){
+    localStorage.removeItem('loginUser');
+    window.location.href = 'login.html';
+  }
+}
+renderTable();
+</script></body></html>
