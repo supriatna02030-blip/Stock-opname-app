@@ -59,7 +59,6 @@ const daftarBarang = [
 {no:41, kat:"MINYAK", kode:"45258", nama:"Merah pth m", oh:12, harga:43000},
 {no:42, kat:"MINYAK", kode:"436397", nama:"ikan doranq", oh:7, harga:43000},
 ];
-
 const tbody = document.querySelector('#tabelOpname tbody');
 daftarBarang.forEach((d) => {
   tbody.innerHTML += `<tr>
@@ -71,7 +70,6 @@ daftarBarang.forEach((d) => {
     <td id="selisihRp${d.no}">0</td>
   </tr>`;
 });
-
 function hitung(no, oh, harga){
   let fisik = parseInt(document.getElementById('fisik'+no).value) || 0;
   let selisih = fisik - oh;
@@ -81,7 +79,6 @@ function hitung(no, oh, harga){
   document.getElementById('selisihRp'+no).innerText = selisihRp.toLocaleString('id-ID');
   document.getElementById('selisihRp'+no).className = selisihRp < 0 ? 'selisih-minus' : selisihRp > 0 ? 'selisih-plus' : '';
 }
-
 function simpanData(){
   let data = [];
   daftarBarang.forEach((d) => {
