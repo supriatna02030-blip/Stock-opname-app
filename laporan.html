@@ -4,15 +4,16 @@
 .container{background:white; padding:15px; border-radius:15px; max-width:1200px; margin:auto; overflow-x:auto}
 .btn{padding:10px 15px; border:none; border-radius:8px; margin:5px; cursor:pointer; font-weight:600}
 .btn-back{background:#95a5a6; color:white}.btn-print{background:#27ae60; color:white}
-.btn-reset{background:#e74c3c; color:white}.btn-excel{background:#1d6f42; color:white}
+.btn-reset{background:#e74c3c; color:white}.btn-excel{background:#1d6f42; color:white}.btn-gabung{background:#8e44ad; color:white}
 .setting{display:flex; gap:10px; margin:15px 0; flex-wrap:wrap; align-items:center}
-.setting select{padding:8px; border-radius:8px; border:1px solid #ddd; font-weight:600}
+.setting select,.setting input{padding:8px; border-radius:8px; border:1px solid #ddd; font-weight:600}
 .summary{display:flex; gap:10px; margin:15px 0; flex-wrap:wrap}
 .card{flex:1; min-width:150px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:15px; border-radius:10px; text-align:center}
 .card h3{margin:0; font-size:14px}.card p{margin:5px 0 0; font-size:22px; font-weight:700}
 .filter{margin:10px 0} select{padding:8px; border-radius:8px; border:1px solid #ddd}
 table{width:100%; border-collapse:collapse; font-size:12px; min-width:1000px} th,td{border:1px solid #ddd; padding:6px; text-align:center; white-space:nowrap}
 th{background:#3498db; color:white}.selisih-minus{color:red; font-weight:bold}.selisih-plus{color:green; font-weight:bold}
+.badge{background:#e74c3c; color:white; padding:3px 8px; border-radius:20px; font-size:10px}
 @media print{.btn,.setting,.filter{display:none}}
 </style>
 </head><body><div class="container">
@@ -20,17 +21,32 @@ th{background:#3498db; color:white}.selisih-minus{color:red; font-weight:bold}.s
 <button class="btn btn-back" onclick="window.location.href='home.html'">⬅️ Kembali ke Home</button>
 <button class="btn btn-print" onclick="window.print()">🖨️ Print PDF</button>
 <button class="btn btn-excel" onclick="exportExcel()">📊 Export Excel</button>
-<button class="btn btn-reset" onclick="resetData()">🗑️ Reset Shift Ini</button>
+<button class="btn btn-gabung" onclick="gabungHarian()">📅 Gabung Per Hari</button>
+<button class="btn btn-reset" onclick="resetData()">🗑️ Reset</button>
 
 <h2>📊 LAPORAN STOCK OPNAME K792</h2>
 
 <div class="setting">
-  <label><b>Pilih Laporan Shift:</b></label>
-  <select id="pilihLaporanShift" onchange="loadData()">
-    <option value="shift1">SHIFT 1 - PAGI</option>
-    <option value="shift2">SHIFT 2 - SIANG</option>
-    <option value="shift3">SHIFT 3 - MALAM</option>
+  <label><b>Mode Lihat:</b></label>
+  <select id="modeLihat" onchange="toggleMode()">
+    <option value="perShift">Per Shift</option>
+    <option value="perHari">Gabungan Per Hari</option>
   </select>
+
+  <div id="settingShift">
+    <label><b>Pilih Shift:</b></label>
+    <select id="pilihLaporanShift" onchange="loadData()">
+      <option value="shift1">SHIFT 1 - PAGI</option>
+      <option value="shift2">SHIFT 2 - SIANG</option>
+      <option value="shift3">SHIFT 3 - MALAM</option>
+    </select>
+    <input type="date" id="tanggalLaporan" onchange="loadData()">
+  </div>
+
+  <div id="settingHari" style="display:none">
+    <label><b>Pilih Tanggal:</b></label>
+    <input type="date" id="pilihTanggal" onchange="loadDataHarian()">
+  </div>
 </div>
 
 <p id="judulLaporan" style="font-weight:600; font-size:16px"></p>
@@ -46,32 +62,64 @@ th{background:#3498db; color:white}.selisih-minus{color:red; font-weight:bold}.s
   <div class="card"><h3>Total Item</h3><p id="totalItem">0</p></div>
   <div class="card"><h3>Selisih Kurang</h3><p id="totalKurang">0</p></div>
   <div class="card"><h3>Selisih Lebih</h3><p id="totalLebih">0</p></div>
-  <div class="card"><h3>Total Selisih Rp</h3><p id="totalRp">Rp 0</p></div>
+  <div class="card"><h3>Total Data</h3><p id="totalData">0</p></div>
 </div>
 
 <table id="tabelLaporan"><thead><tr>
-<th>No</th><th>Kategori</th><th>Kode</th><th>Nama</th><th>OH</th><th>Fisik</th><th>Selisih</th><th>Status</th>
+<th>No</th><th>Kategori</th><th>Kode</th><th>Nama</th><th>OH</th><th>Fisik</th><th>Selisih</th><th>Shift</th><th>Status</th>
 </tr></thead><tbody></tbody></table>
 </div><script>
 let data = [];
+let mode = 'perShift';
 let currentShift = 'shift1';
 
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('tanggalLaporan').value = today;
+document.getElementById('pilihTanggal').value = today;
+
+function toggleMode(){
+  mode = document.getElementById('modeLihat').value;
+  document.getElementById('settingShift').style.display = mode === 'perShift'? 'flex' : 'none';
+  document.getElementById('settingHari').style.display = mode === 'perHari'? 'flex' : 'none';
+  loadData();
+}
+
 function loadData(){
-  currentShift = document.getElementById('pilihLaporanShift').value;
-  const key = 'dataOpname_' + currentShift;
-  data = JSON.parse(localStorage.getItem(key)) || [];
+  if(mode === 'perShift'){
+    currentShift = document.getElementById('pilihLaporanShift').value;
+    const tgl = document.getElementById('tanggalLaporan').value;
+    const key = `dataOpname_${currentShift}_${tgl}`;
+    data = JSON.parse(localStorage.getItem(key)) || [];
+    data = data.map(d => ({...d, shift: currentShift.toUpperCase()}));
+    const judul = localStorage.getItem('judulLaporan') || `LAPORAN ${currentShift.toUpperCase()} - ${tgl}`;
+    document.getElementById('judulLaporan').innerText = judul;
+  }
+  isiKategori();
+  renderTable();
+}
 
-  const judul = localStorage.getItem('judulLaporan') || `LAPORAN ${currentShift.toUpperCase()}`;
-  document.getElementById('judulLaporan').innerText = judul;
+function loadDataHarian(){
+  const tgl = document.getElementById('pilihTanggal').value;
+  data = [];
 
-  // isi dropdown kategori
+  ['shift1','shift2','shift3'].forEach(shift => {
+    const key = `dataOpname_${shift}_${tgl}`;
+    const dataShift = JSON.parse(localStorage.getItem(key)) || [];
+    const dataWithShift = dataShift.map(d => ({...d, shift: shift.toUpperCase()}));
+    data = data.concat(dataWithShift);
+  });
+
+  document.getElementById('judulLaporan').innerText = `LAPORAN GABUNGAN TANGGAL ${tgl}`;
+  isiKategori();
+  renderTable();
+}
+
+function isiKategori(){
   const filterKat = document.getElementById('filterKat');
   filterKat.innerHTML = '<option value="SEMUA">SEMUA</option>';
   [...new Set(data.map(d=>d.kat))].forEach(k=>{
     filterKat.innerHTML += `<option value="${k}">${k}</option>`
   });
-
-  renderTable();
 }
 
 function renderTable(){
@@ -81,7 +129,23 @@ function renderTable(){
   tbody.innerHTML = '';
   let totalKurang = 0, totalLebih = 0;
 
-  filterData.forEach((d) => {
+  let dataGabungan = [];
+  if(mode === 'perHari'){
+    const map = {};
+    filterData.forEach(d => {
+      if(!map[d.kode]){
+        map[d.kode] = {...d, fisik: 0, oh: 0, selisih: 0, shift: 'GABUNGAN'};
+      }
+      map[d.kode].oh += d.oh;
+      map[d.kode].fisik += d.fisik;
+      map[d.kode].selisih += d.selisih;
+    });
+    dataGabungan = Object.values(map);
+  } else {
+    dataGabungan = filterData;
+  }
+
+  dataGabungan.forEach((d) => {
     if(d.selisih < 0) totalKurang += d.selisih;
     if(d.selisih > 0) totalLebih += d.selisih;
 
@@ -92,37 +156,53 @@ function renderTable(){
 
     tbody.innerHTML += `<tr>
       <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td style="text-align:left">${d.nama}</td>
-      <td>${d.oh}</td><td>${d.fisik}</td>
+      <td>${d.oh.toFixed(3)}</td><td>${d.fisik.toFixed(3)}</td>
       <td class="${d.selisih < 0? 'selisih-minus' : d.selisih > 0? 'selisih-plus' : ''}">${d.selisih.toFixed(3)}</td>
+      <td><span class="badge">${d.shift}</span></td>
       <td>${status}</td>
     </tr>`;
   });
-  document.getElementById('totalItem').innerText = filterData.length;
+  document.getElementById('totalItem').innerText = dataGabungan.length;
   document.getElementById('totalKurang').innerText = totalKurang.toFixed(3);
   document.getElementById('totalLebih').innerText = totalLebih.toFixed(3);
-  document.getElementById('totalRp').innerText = '-';
+  document.getElementById('totalData').innerText = filterData.length;
+}
+
+function gabungHarian(){
+  document.getElementById('modeLihat').value = 'perHari';
+  toggleMode();
 }
 
 function resetData(){
-  if(confirm(`Yakin mau hapus semua data ${currentShift.toUpperCase()}?`)){
-    localStorage.removeItem('dataOpname_' + currentShift);
-    alert('Data berhasil di reset!');
-    loadData();
+  const tgl = mode === 'perShift'? document.getElementById('tanggalLaporan').value : document.getElementById('pilihTanggal').value;
+  if(mode === 'perShift'){
+    if(confirm(`Yakin mau hapus data ${currentShift.toUpperCase()} tanggal ${tgl}?`)){
+      localStorage.removeItem(`dataOpname_${currentShift}_${tgl}`);
+      loadData();
+    }
+  } else {
+    if(confirm(`Yakin mau hapus SEMUA data 3 shift tanggal ${tgl}?`)){
+      localStorage.removeItem(`dataOpname_shift1_${tgl}`);
+      localStorage.removeItem(`dataOpname_shift2_${tgl}`);
+      localStorage.removeItem(`dataOpname_shift3_${tgl}`);
+      loadDataHarian();
+    }
   }
 }
 
 function exportExcel(){
   if(data.length === 0){ alert('Data kosong!'); return; }
-  let csv = 'No,Kategori,Kode,Nama,OH,Fisik,Selisih\n';
+  let csv = 'No,Kategori,Kode,Nama,OH,Fisik,Selisih,Shift\n';
   data.forEach(d=>{
-    csv += `${d.no},${d.kat},${d.kode},"${d.nama}",${d.oh},${d.fisik},${d.selisih}\n`;
+    csv += `${d.no},${d.kat},${d.kode},"${d.nama}",${d.oh},${d.fisik},${d.selisih},${d.shift}\n`;
   });
+  const tgl = mode === 'perHari'? document.getElementById('pilihTanggal').value : document.getElementById('tanggalLaporan').value;
+  const namaFile = mode === 'perHari'? `Laporan_Gabungan_${tgl}.csv` : `Laporan_${currentShift}_${tgl}.csv`;
   const blob = new Blob([csv], {type: 'text/csv'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `Laporan_Opname_${currentShift}_${new Date().toLocaleDateString('id-ID')}.csv`; a.click();
+  a.href = url; a.download = namaFile; a.click();
 }
 
-// load pertama kali
 loadData();
 </script></body></html>
