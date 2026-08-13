@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SO RAHIL K792</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{font-family:'Poppins', sans-serif}
+body{background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:15px; transition:0.3s}
+body.dark{background:#1a1a2e}
+.container{background:white; padding:25px; border-radius:20px; width:100%; max-width:1200px; box-shadow: 0 10px 30px rgba(0,0,0,0.2)}
+body.dark.container{background:#16213e; color:white}
+#toast{position:fixed; top:-60px; left:50%; transform:translateX(-50%); background:#27ae60; color:#fff; padding:12px 25px; border-radius:20px; transition: top 0.4s; z-index:999; font-weight:600}
+#toast.show{top:20px}
+.page{display:none}.page.active{display:block; animation: slideUp 0.3s ease-out;}
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.header-toko{text-align:center; padding:15px; margin-bottom:15px; border-bottom:2px solid #eee}
+.header-toko img{width:70px; height:70px; border-radius:15px; margin-bottom:8px; background:#fff; padding:5px}
+.header-toko h1{margin:5px 0; font-size:22px; color:#2980b9}
+body.dark.header-toko h1{color:#00f2fe}
+.btn-menu{margin:10px 0; padding:18px; font-size:18px; width:100%; color:white; border:none; border-radius:10px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)}
+.btn-aksi{background:#27ae60; width:auto; padding:10px 15px; margin:5px; color:white; border:none; border-radius:10px}
+.btn-back{background:#7f8c8d; width:auto; padding:10px 15px; margin:10px 0; color:white; border:none; border-radius:10px}
+.btn-pdf{background:#e67e22; width:auto; padding:10px 15px; margin:5px; color:white; border:none; border-radius:10px}
+.btn-wa{background:#25D366; width:auto; padding:10px 15px; margin:5px; color:white; border:none; border-radius:10px}
+.btn-dark{position:fixed; top:20px; right:20px; width:50px; height:50px; border-radius:50%; font-size:20px; z-index:999; padding:0}
+input,button,select{width:100%; padding:12px; margin:6px 0; border:2px solid #eee; border-radius:10px}
+table{width:100%; border-collapse:collapse; margin-top:10px; font-size:12px}
+th{background:#2980b9; color:white; padding:8px; position:sticky; top:0}
+td{padding:8px; border-bottom:1px solid #ddd; text-align:center}
+body.dark td{border-color:#333}
+.selisih-minus{color:red; font-weight:700; animation: blink 0.8s infinite;}
+.selisih-plus{color:green; font-weight:700; animation: blink 0.8s infinite;}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.dashboard{display:flex; gap:10px; margin:20px 0; flex-wrap:wrap}
+.dash-card{flex:1; min-width:110px; padding:15px; border-radius:15px; text-align:center; color:white}
+.card-item{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.card-minus{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+.card-rugi{background:linear-gradient(135deg,#f39c12,#e67e22)}
+#formTambah{background:#f8f9fa; padding:15px; border-radius:10px; margin-top:10px}
+body.dark #formTambah{background:#2c3e50}
+</style>
+</head>
+<body>
+<button class="btn-dark" onclick="toggleDark()">🌙</button>
+<div id="toast">✅ Data Tersimpan</div>
+
+<div class="container">
+  <div id="loginPage">
+    <h2>🔐 LOGIN SO K792</h2>
+    <input type="text" id="inputNIK" placeholder="NIK Karyawan">
+    <input type="password" id="inputPIN" placeholder="PIN">
+    <button class="btn-menu" onclick="login()">Login</button>
+    <p id="loginError" style="color:red; text-align:center"></p>
+  </div>
+
+  <div id="mainApp" style="display:none">
+    <div id="home" class="page active">
+      <div class="header-toko">
+        <img src="https://placehold.co/70x70/2980b9/fff?text=K792" alt="logo">
+        <h1>SO RAHIL K792</h1>
+        <p>Alfamart Karbela 2</p>
+      </div>
+      <h2><span id="salam"></span> <span id="namaUser"></span></h2>
+      <p id="tanggalHariIni" style="text-align:center; color:#7f8c8d; margin-top:-10px"></p>
+      <button class="btn-menu" onclick="showMenu('opname')">📝 Input Opname</button>
+      <button class="btn-menu" onclick="showMenu('dashboard')">📊 Dashboard</button>
+      <button class="btn-menu" onclick="showMenu('laporan')">📋 Laporan & Rekap</button>
+      <button class="btn-menu btn-danger" onclick="logout()">🚪 Logout</button>
+    </div>
+
+    <div id="menuDashboard" class="page">
+      <button class="btn-back" onclick="showMenu('home')">⬅️ Kembali ke Home</button>
+      <h2>📊 Dashboard Ringkasan</h2>
+      <div class="dashboard">
+        <div class="dash-card card-item"><h4>Total Item</h4><h2 id="dashTotal2">0</h2></div>
+        <div class="dash-card card-minus"><h4>Minus</h4><h2 id="dashMinus2">0</h2></div>
+        <div class="dash-card card-rugi"><h4>Rugi</h4><h2 id="dashRugi2">Rp 0</h2></div>
+      </div>
+    </div>
+
+    <div id="menuOpname" class="page">
+      <button class="btn-back" onclick="showMenu('home')">⬅️ Kembali ke Home</button>
+      <h2>📝 Input Opname</h2>
+      <input type="text" id="kodeToko" value="K792/KARBELA2">
+      <div style="display:flex; gap:10px">
+        <input type="date" id="tanggalOpname">
+        <select id="pilihShift"><option>SHIFT 1</option><option>SHIFT 2</option><option>SHIFT 3</option></select>
+      </div>
+      <input type="text" id="namaPIC" placeholder="👤 Nama PIC">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center">
+        <button class="btn-aksi" onclick="loadItems()">📥 Load 43 Item</button>
+        <button class="btn-aksi" style="background:#8e44ad" onclick="showFormTambah()">➕ Tambah Item Manual</button>
+        <button class="btn-aksi" onclick="simpanOpname()">💾 Simpan Opname</button>
+      </div>
+      
+      <div id="formTambah" style="display:none;">
+        <h4>➕ Tambah Item Baru</h4>
+        <input type="text" id="inKat" placeholder="Kategori: contoh KANZLER SINGLE">
+        <input type="text" id="inKode" placeholder="Kode Barang">
+        <input type="text" id="inNama" placeholder="Nama Barang">
+        <input type="number" id="inOH" placeholder="OH Awal" value="0">
+        <input type="number" id="inHarga" placeholder="Harga Satuan" value="0">
+        <div style="display:flex; gap:10px">
+          <button class="btn-back" onclick="hideFormTambah()">Batal</button>
+          <button class="btn-aksi" onclick="simpanItemManual()">Simpan Item</button>
+        </div>
+      </div>
+
+      <div id="tabelContainer"></div>
+      <div id="totalStok" style="margin-top:15px; font-weight:700; background:#2980b9; color:white; padding:15px; border-radius:15px; text-align:center"></div>
+    </div>
+
+    <div id="menuLaporan" class="page">
+      <button class="btn-back" onclick="showMenu('home')">⬅️ Kembali ke Home</button>
+      <h2>📊 Laporan & Rekap</h2>
+      <button class="btn-wa" onclick="kirimRekapWA()">📲 Kirim Rekap Minus WA</button>
+      <button class="btn-pdf" onclick="exportPDF()">📑 Export PDF</button>
+      <div id="rekapSelisih"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+let dataBarang = [];
+let users = [{nik:"ADMIN", pin:"1234", nama:"ADMIN", role:"admin"}];
+let userLogin = null;
+
+function showMenu(menu) {
+  document.querySelectorAll('.page').forEach(p => {p.classList.remove('active'); p.style.display = 'none';});
+  let target = document.getElementById('menu' + menu.charAt(0).toUpperCase() + menu.slice(1));
+  target.style.display = 'block';
+  setTimeout(()=> target.classList.add('active'), 10);
+  if(menu === 'laporan') tampilkanRekapSelisih();
+  if(menu === 'dashboard') updateDashboard();
+}
+function showToast(pesan="✅ Data Tersimpan"){const t=document.getElementById('toast'); t.innerText=pesan; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000);}
+window.onload = function(){ document.getElementById('tanggalOpname').valueAsDate = new Date(); }
+
+function updateSalam(){
+  const jam = new Date().getHours();
+  const hari = new Date().toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+  let salam = "";
+  
+  if(jam >= 5 && jam < 11){ salam = "☀️ Selamat Pagi"; }
+  else if(jam >= 11 && jam < 15){ salam = "🌤️ Selamat Siang"; }
+  else if(jam >= 15 && jam < 18){ salam = "🌇 Selamat Sore"; }
+  else{ salam = "🌙 Selamat Malam"; }
+  
+  document.getElementById('salam').innerText = salam;
+  document.getElementById('tanggalHariIni').innerText = hari;
+}
+
+function login(){ 
+  if(document.getElementById('inputNIK').value==="ADMIN" && document.getElementById('inputPIN').value==="1234"){ 
+    userLogin={role:'admin',nama:'ADMIN'}; 
+    document.getElementById('loginPage').style.display='none'; 
+    document.getElementById('mainApp').style.display='block'; 
+    document.getElementById('namaUser').innerText='ADMIN'; 
+    updateSalam();
+    showMenu('home'); 
+  } else document.getElementById('loginError').innerText='NIK/PIN Salah!'; 
+}
+function logout(){ location.reload(); }
+function toggleDark(){ document.body.classList.toggle('dark'); }
+
+function showFormTambah(){ document.getElementById('formTambah').style.display = 'block'; }
+function hideFormTambah(){ document.getElementById('formTambah').style.display = 'none'; }
+function simpanItemManual(){
+  let itemBaru = {
+    kategori: document.getElementById('inKat').value.toUpperCase(),
+    kode: document.getElementById('inKode').value,
+    nama: document.getElementById('inNama').value.toLowerCase(),
+    oh: document.getElementById('inOH').value,
+    fisik: "0",
+    harga: document.getElementById('inHarga').value
+  };
+  if(!itemBaru.kode || !itemBaru.nama) return alert("Kode & Nama wajib diisi!");
+  dataBarang.push(itemBaru); tampilkan(); hideFormTambah(); showToast(`✅ ${itemBaru.nama} ditambah`);
+  document.getElementById('inKat').value = ''; document.getElementById('inKode').value = ''; document.getElementById('inNama').value = '';
+}
+
+const templateShift = [
+{kategori:"KANZLER SINGLE", kode:"417806", nama:"kanzler sgl mini 65g", oh:"14", fisik:"14", harga:"15000"},
+{kategori:"KANZLER SINGLE", kode:"417804", nama:"kanzler sgl ori 65g", oh:"28", fisik:"28", harga:"15000"},
+{kategori:"KANZLER SINGLE", kode:"417805", nama:"kanzler single keju", oh:"18", fisik:"18", harga:"15000"},
+{kategori:"KANZLER SINGLE", kode:"423992", nama:"kanzler single hot", oh:"32", fisik:"32", harga:"15000"},
+{kategori:"KANZLER SINGLE", kode:"435578", nama:"kanzler single gochujang", oh:"36", fisik:"36", harga:"15000"},
+{kategori:"KANZLER BAKSO", kode:"435736", nama:"kanzler bakso hot 48g", oh:"14", fisik:"14", harga:"12000"},
+{kategori:"KANZLER BAKSO", kode:"465771", nama:"kanzler bakso gochujang 55g", oh:"19", fisik:"18", harga:"12000"},
+{kategori:"KANZLER BAKSO", kode:"428660", nama:"kanzler bakso ori 48g", oh:"8", fisik:"8", harga:"12000"},
+{kategori:"KANZLER BAKSO", kode:"428662", nama:"kanzler bakso keju 48g", oh:"10", fisik:"10", harga:"12000"},
+{kategori:"FIESTA SOSIS", kode:"443704", nama:"fiesta rtg sosis spicykorean", oh:"28", fisik:"28", harga:"18000"},
+{kategori:"ECO BAG", kode:"ECO1", nama:"Alfamart ECO", oh:"295", fisik:"302", harga:"3000"},
+{kategori:"ECO BAG", kode:"ECO2", nama:"ECO bag kecil", oh:"135", fisik:"132", harga:"2500"},
+{kategori:"ECO BAG", kode:"ECO3", nama:"ECO bag gede", oh:"65", fisik:"69", harga:"5000"},
+{kategori:"FRESHMILK", kode:"FM1", nama:"Diamond", oh:"24", fisik:"24", harga:"25000"},
+{kategori:"FRESHMILK", kode:"FM2", nama:"Greenfield milk", oh:"16", fisik:"16", harga:"28000"},
+{kategori:"FRESHMILK", kode:"FM3", nama:"Omela", oh:"36", fisik:"36", harga:"22000"},
+{kategori:"FRESHMILK", kode:"460235", nama:"NPL 15L", oh:"0", fisik:"0", harga:"120000"},
+{kategori:"FRESHMILK", kode:"422782", nama:"Le mineral 15L", oh:"1", fisik:"0", harga:"35000"},
+{kategori:"GULA", kode:"401698", nama:"PSM Gula Premium 1kg", oh:"38", fisik:"38", harga:"16000"},
+{kategori:"GULA", kode:"405970", nama:"Rose Brand Gula Tebu premium 1kg", oh:"41", fisik:"41", harga:"16000"},
+{kategori:"GULA", kode:"466054", nama:"Gula vigula kristal putih 1kg", oh:"7", fisik:"7", harga:"15000"},
+{kategori:"GULA", kode:"221587", nama:"Gulaku gula tebu premium", oh:"7", fisik:"6", harga:"16000"},
+{kategori:"GULA", kode:"406643", nama:"GMP Gula Kristal putih 1kg", oh:"32", fisik:"32", harga:"15000"},
+{kategori:"MINYAK", kode:"113079", nama:"Tropical myk grg pet 2L", oh:"58", fisik:"58", harga:"35000"},
+{kategori:"MINYAK", kode:"451350", nama:"Tropical myk grg pet 1,5L", oh:"16", fisik:"16", harga:"28000"},
+{kategori:"MINYAK", kode:"61132", nama:"Tropical myk grg pet 1L", oh:"48", fisik:"48", harga:"20000"},
+{kategori:"MINYAK", kode:"195673", nama:"sania mnyk grg pch 1L", oh:"35", fisik:"11", harga:"20000"},
+{kategori:"MINYAK", kode:"211141", nama:"Bimoli myk pch grg 1L", oh:"4", fisik:"4", harga:"20000"},
+{kategori:"MINYAK", kode:"6965", nama:"Barco myk grg pch 1L", oh:"12", fisik:"12", harga:"20000"},
+{kategori:"MINYAK", kode:"244111", nama:"SunCo myk grg pch 2L", oh:"72", fisik:"6", harga:"35000"},
+{kategori:"MINYAK", kode:"156747", nama:"Filma myk grg pch 2L", oh:"17", fisik:"5", harga:"35000"},
+{kategori:"MINYAK", kode:"192730", nama:"Bimoli myk grg pch 2L", oh:"16", fisik:"4", harga:"35000"},
+{kategori:"MINYAK", kode:"113222", nama:"Fortune myk grg pch 2L", oh:"29", fisik:"4", harga:"35000"},
+{kategori:"MINYAK", kode:"195674", nama:"Sania myk grg pch 2L", oh:"35", fisik:"3", harga:"35000"},
+{kategori:"MINYAK", kode:"211378", nama:"Bimoli myk grg spesial pch 2L", oh:"1", fisik:"1", harga:"38000"},
+{kategori:"MINYAK", kode:"121905", nama:"Sovia myk grg pch 2L", oh:"95", fisik:"10", harga:"35000"},
+{kategori:"MINYAK", kode:"437794", nama:"Harumnas myk grg pch 2L", oh:"0", fisik:"0", harga:"34000"},
+{kategori:"MINYAK", kode:"433436", nama:"Camar myk grg pch 2L", oh:"0", fisik:"0", harga:"34000"},
+{kategori:"MINYAK", kode:"123332", nama:"Alfamart myk grg pch 2L", oh:"40", fisik:"40", harga:"33000"},
+{kategori:"MINYAK", kode:"453308", nama:"Vipco myk 2L", oh:"6", fisik:"6", harga:"34000"},
+{kategori:"MINYAK", kode:"45258", nama:"Merah pth myk 2L", oh:"12", fisik:"12", harga:"34000"},
+{kategori:"MINYAK", kode:"436397", nama:"ikan dorang myk grng kelapa", oh:"7", fisik:"7", harga:"25000"}
+];
+
+function loadItems(){ dataBarang = templateShift.map(item => ({...item})); tampilkan(); showToast("📥 43 Item Dimuat"); }
+function updateOH(i,val){dataBarang[i].oh=val; tampilkan();}
+function updateFisik(i,val){dataBarang[i].fisik=val; tampilkan();}
+function updateHarga(i,val){dataBarang[i].harga=val; tampilkan();}
+function tampilkan(){
+  let container=document.getElementById('tabelContainer'); container.innerHTML='';
+  let kategoriList = [...new Set(dataBarang.map(x => x.kategori))];
+  let totalOH=0; let totalFisik=0;
+  kategoriList.forEach(kat => {
+    let html = `<h3>${kat}</h3><table><tr><th>No</th><th>Kode</th><th>Nama</th><th>OH</th><th>Fisik</th><th>Harga</th><th>Selisih</th><th>Selisih Rp</th></tr>`;
+    let no=1;
+    dataBarang.filter(x => x.kategori === kat).forEach((item) => {
+      let index = dataBarang.indexOf(item);
+      totalOH+=Number(item.oh)||0; totalFisik+=Number(item.fisik)||0;
+      let selisih=(Number(item.fisik)||0)-(Number(item.oh)||0); let selisihRp = selisih * (Number(item.harga)||0);
+      let classSelisih=selisih>0?'selisih-plus':selisih<0?'selisih-minus':'';
+      html+=`<tr><td>${no++}</td><td>${item.kode}</td><td style="text-align:left">${item.nama}</td>
+      <td><input type="number" value="${item.oh}" onchange="updateOH(${index},this.value)" style="width:60px"></td>
+      <td><input type="number" value="${item.fisik}" onchange="updateFisik(${index},this.value)" style="width:60px"></td>
+      <td><input type="number" value="${item.harga}" onchange="updateHarga(${index},this.value)" style="width:80px"></td>
+      <td class="${classSelisih}">${selisih}</td><td class="${classSelisih}">Rp ${selisihRp.toLocaleString()}</td></tr>`;
+    });
+    html+=`</table>`; container.innerHTML += html;
+  });
+  document.getElementById('totalStok').innerHTML=`Total Item: ${dataBarang.length} | OH: ${totalOH} | Fisik: ${totalFisik}`;
+}
+function updateDashboard(){
+  let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0));
+  let totalRugi = 0; minus.forEach(m => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); totalRugi += kurang * (Number(m.harga)||0); });
+  document.getElementById('dashTotal2').innerText = dataBarang.length;
+  document.getElementById('dashMinus2').innerText = minus.length;
+  document.getElementById('dashRugi2').innerText = 'Rp ' + totalRugi.toLocaleString();
+}
+function tampilkanRekapSelisih(){
+  let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0));
+  let html = '';
+  if(minus.length > 0){
+    html += `<h3>❌ REKAP BARANG MINUS: ${minus.length} Item</h3>`;
+    minus.forEach((m,i) => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); let rugi = kurang * (Number(m.harga)||0); html += `<p>${i+1}. ${m.nama} - Kurang <b>${kurang}</b> = <b>Rp ${rugi.toLocaleString()}</b></p>`; });
+  }
+  document.getElementById('rekapSelisih').innerHTML = html;
+}
+function simpanOpname(){ localStorage.setItem('so', JSON.stringify(dataBarang)); showToast(); }
+function kirimRekapWA(){
+  let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0));
+  if(minus.length===0) return alert('Tidak ada barang minus!');
+  let pesan = `*REKAP MINUS SO K792*\nTanggal: ${document.getElementById('tanggalOpname').value}\n\n`;
+  minus.forEach((m,i) => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); let rugi = kurang * (Number(m.harga)||0); pesan += `${i+1}. ${m.nama} - Kurang ${kurang} = Rp ${rugi.toLocaleString()}\n`; });
+  window.open(`https://wa.me/?text=${encodeURIComponent(pesan)}`);
+}
+function exportPDF(){
+  const doc = new jsPDF();
+  doc.setFontSize(16); doc.text("LAPORAN STOCK OPNAME K792", 105, 15, {align:"center"});
+  let y = 30; let minus = dataBarang.filter(x => (Number(x.fisik)||0) < (Number(x.oh)||0)); let totalRugi=0;
+  doc.setFontSize(12); doc.text("REKAP BARANG MINUS", 14, y); y+=10;
+  minus.forEach((m,i) => { let kurang = Math.abs((Number(m.fisik)||0) - (Number(m.oh)||0)); let rugi = kurang * (Number(m.harga)||0); totalRugi+=rugi; doc.text(`${i+1}. ${m.nama} - Kurang ${kurang} = Rp ${rugi.toLocaleString()}`, 14, y); y+=7; });
+  doc.text(`TOTAL RUGI: Rp ${totalRugi.toLocaleString()}`, 14, y+5);
+  doc.save(`LAPORAN_SO_K792.pdf`); showToast("✅ PDF Download");
+}
+</script>
+</body>
+</html>
