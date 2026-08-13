@@ -22,8 +22,7 @@ td:nth-child(4){text-align:left}
 </style>
 </head><body><div class="container">
 
-<button class="btn btn-back" onclick="window.location.href='login.html'">⬅️ Kembali</button>
-<button class="btn" style="background:#e74c3c; color:white" onclick="logout()">🚪 Logout</button>
+<button class="btn btn-back" onclick="window.location.href='index.html'">⬅️ Kembali</button>
 <button class="btn btn-hapus" onclick="hapusData()">🗑️ Hapus Shift Ini</button>
 <button class="btn btn-copy" onclick="copyOHDariShiftSebelumnya()">📋 Copy OH dari Shift Sebelumnya</button>
 
@@ -62,8 +61,7 @@ const dataBarang = [
 {no:8, kat:"KANZLER BAKSO", kode:"428660", nama:"KANZLER BAKSO ORIGINAL 48 GRAM", harga:15500},
 {no:9, kat:"KANZLER BAKSO", kode:"428662", nama:"KANZLER BAKSO KEJU 48 GRAM", harga:15500},
 {no:10, kat:"FIESTA SOSIS", kode:"443704", nama:"FIESTA RTG SOSIS SPICY KOREAN 500 GRAM", harga:42000},
-
-// INI ITEM MINYAK BARU 19 BARIS
+// MINYAK 19 ITEM
 {no:11, kat:"MINYAK", kode:"113079", nama:"Tropical myk grg pet 2L", harga:35000, oh:58},
 {no:12, kat:"MINYAK", kode:"451350", nama:"Tropical myk grg pet 1,5L", harga:28000, oh:16},
 {no:13, kat:"MINYAK", kode:"61132", nama:"Tropical myk grg pet 1L", harga:18000, oh:48},
@@ -83,33 +81,16 @@ const dataBarang = [
 {no:27, kat:"MINYAK", kode:"453308", nama:"Vipco myk 2L", harga:30000, oh:6},
 {no:28, kat:"MINYAK", kode:"45258", nama:"Merah pth myk 2L", harga:30000, oh:12},
 {no:29, kat:"MINYAK", kode:"436397", nama:"Ikan dorang myk grng kelapa", harga:25000, oh:7},
-
 {no:30, kat:"ECO BAG", kode:"EB001", nama:"ECO BAG ALFAMART", harga:3000},
 {no:31, kat:"ECO BAG", kode:"EB002", nama:"ECO BAG KECIL", harga:2000},
 {no:32, kat:"ECO BAG", kode:"EB003", nama:"ECO BAG GEDE", harga:5000},
 {no:33, kat:"FRESH MILK", kode:"FM001", nama:"SUSU FRESH MILK DIAMOND 1 LITER", harga:26000},
 {no:34, kat:"FRESH MILK", kode:"FM002", nama:"SUSU FRESH MILK GREENFIELDS 1 LITER", harga:28000},
-{no:35, kat:"FRESH MILK", kode:"FM003", nama:"SUSU UHT OMELA 1 LITER", harga:24000},
-{no:36, kat:"LAIN-LAIN", kode:"RAW001", nama:"RAW ICE CUP PLASTIC", harga:500},
-{no:37, kat:"LAIN-LAIN", kode:"418605", nama:"RAW HOT BEANSPOT", harga:0},
-{no:38, kat:"AIR MINERAL", kode:"422782", nama:"LE MINERAL GALON 15 LITER", harga:22000},
-{no:39, kat:"AIR MINERAL", kode:"460235", nama:"NPL GALON 15 LITER", harga:21000},
-{no:40, kat:"GULA PASIR", kode:"401698", nama:"GULA PSM PREMIUM 1 KILOGRAM", harga:16000},
-{no:41, kat:"GULA PASIR", kode:"405970", nama:"GULA ROSE BRAND TEBU PREMIUM 1 KILOGRAM", harga:16500},
-{no:42, kat:"GULA PASIR", kode:"466054", nama:"GULA VIGULA KRISTAL PUTIH 1 KILOGRAM", harga:15800},
-{no:43, kat:"GULA PASIR", kode:"221587", nama:"GULA GULAKU TEBU PREMIUM 1 KILOGRAM", harga:16200},
-{no:44, kat:"GULA PASIR", kode:"406643", nama:"GULA GMP KRISTAL PUTIH 1 KILOGRAM", harga:15900}
+{no:35, kat:"FRESH MILK", kode:"FM003", nama:"SUSU UHT OMELA 1 LITER", harga:24000}
 ];
 
 let currentShift = 'shift1';
-document.getElementById('tanggalShift').value = '2026-08-13';
-
-// CEK LOGIN DULU
-const loginUser = JSON.parse(localStorage.getItem('loginUser'));
-if(!loginUser){
-  alert('Silakan login dulu!');
-  window.location.href = 'login.html';
-}
+document.getElementById('tanggalShift').value = new Date().toISOString().split('T')[0];
 
 function renderTable(){
   const tbody = document.querySelector('#tabelOpname tbody');
@@ -122,7 +103,7 @@ function renderTable(){
 
   dataBarang.forEach(d=>{
     const data = dataLama.find(x => x.no === d.no) || {};
-    const ohVal = data.oh ?? d.oh ?? ''; // kalau ada oh default di dataBarang
+    const ohVal = data.oh?? d.oh?? '';
     const fisikVal = data.fisik?? '';
     const hargaVal = data.harga?? d.harga;
 
@@ -171,11 +152,11 @@ function simpanData(){
     const oh = parseFloat(document.getElementById('oh'+d.no).value) || 0;
     const fisik = parseFloat(document.getElementById('fisik'+d.no).value) || 0;
     const selisih = fisik - oh;
-    return {...d, harga, oh, fisik, selisih, selisihRp: selisih*harga, tanggal: tgl, pic: loginUser.user};
+    return {...d, harga, oh, fisik, selisih, selisihRp: selisih*harga, tanggal: tgl, pic: 'UM'};
   });
   localStorage.setItem(key, JSON.stringify(hasil));
-  localStorage.setItem('judulLaporan', `${document.getElementById('judulShift').innerText} - PIC: ${loginUser.user}`);
-  alert(`Data ${currentShift.toUpperCase()} berhasil disimpan oleh ${loginUser.user}!`);
+  localStorage.setItem('judulLaporan', `${document.getElementById('judulShift').innerText} - PIC: UMUM`);
+  alert(`Data ${currentShift.toUpperCase()} berhasil disimpan!`);
   window.location.href='laporan.html';
 }
 
@@ -211,11 +192,5 @@ function gantiShift(){
   renderTable();
 }
 
-function logout(){
-  if(confirm('Yakin mau logout?')){
-    localStorage.removeItem('loginUser');
-    window.location.href = 'login.html';
-  }
-}
 renderTable();
 </script></body></html>
