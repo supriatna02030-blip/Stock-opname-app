@@ -5,21 +5,35 @@
 .btn{padding:10px 15px; border:none; border-radius:8px; margin:5px; cursor:pointer; font-weight:600}
 .btn-back{background:#95a5a6; color:white}.btn-print{background:#27ae60; color:white}
 .btn-reset{background:#e74c3c; color:white}.btn-excel{background:#1d6f42; color:white}
+.setting{display:flex; gap:10px; margin:15px 0; flex-wrap:wrap; align-items:center}
+.setting select{padding:8px; border-radius:8px; border:1px solid #ddd; font-weight:600}
 .summary{display:flex; gap:10px; margin:15px 0; flex-wrap:wrap}
 .card{flex:1; min-width:150px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:15px; border-radius:10px; text-align:center}
 .card h3{margin:0; font-size:14px}.card p{margin:5px 0 0; font-size:22px; font-weight:700}
 .filter{margin:10px 0} select{padding:8px; border-radius:8px; border:1px solid #ddd}
 table{width:100%; border-collapse:collapse; font-size:12px; min-width:1000px} th,td{border:1px solid #ddd; padding:6px; text-align:center; white-space:nowrap}
 th{background:#3498db; color:white}.selisih-minus{color:red; font-weight:bold}.selisih-plus{color:green; font-weight:bold}
-@media print{.btn,.filter{display:none}}</style>
+@media print{.btn,.setting,.filter{display:none}}
+</style>
 </head><body><div class="container">
+
 <button class="btn btn-back" onclick="window.location.href='home.html'">⬅️ Kembali ke Home</button>
 <button class="btn btn-print" onclick="window.print()">🖨️ Print PDF</button>
 <button class="btn btn-excel" onclick="exportExcel()">📊 Export Excel</button>
-<button class="btn btn-reset" onclick="resetData()">🗑️ Reset Data</button>
+<button class="btn btn-reset" onclick="resetData()">🗑️ Reset Shift Ini</button>
 
-<h2>📊 Laporan Stock Opname K792</h2>
-<p id="tanggal"></p>
+<h2>📊 LAPORAN STOCK OPNAME K792</h2>
+
+<div class="setting">
+  <label><b>Pilih Laporan Shift:</b></label>
+  <select id="pilihLaporanShift" onchange="loadData()">
+    <option value="shift1">SHIFT 1 - PAGI</option>
+    <option value="shift2">SHIFT 2 - SIANG</option>
+    <option value="shift3">SHIFT 3 - MALAM</option>
+  </select>
+</div>
+
+<p id="judulLaporan" style="font-weight:600; font-size:16px"></p>
 
 <div class="filter">
   <label><b>Filter Kategori: </b></label>
@@ -36,57 +50,79 @@ th{background:#3498db; color:white}.selisih-minus{color:red; font-weight:bold}.s
 </div>
 
 <table id="tabelLaporan"><thead><tr>
-<th>No</th><th>Kategori</th><th>Kode</th><th>Nama</th><th>OH</th><th>Fisik</th><th>Harga</th><th>Selisih</th><th>Selisih Rp</th>
+<th>No</th><th>Kategori</th><th>Kode</th><th>Nama</th><th>OH</th><th>Fisik</th><th>Selisih</th><th>Status</th>
 </tr></thead><tbody></tbody></table>
 </div><script>
-let data = JSON.parse(localStorage.getItem('dataOpname')) || [];
-document.getElementById('tanggal').innerText = 'Tanggal: ' + new Date().toLocaleString('id-ID');
+let data = [];
+let currentShift = 'shift1';
 
-[...new Set(data.map(d=>d.kat))].forEach(k=>{
-  document.getElementById('filterKat').innerHTML += `<option value="${k}">${k}</option>`
-})
+function loadData(){
+  currentShift = document.getElementById('pilihLaporanShift').value;
+  const key = 'dataOpname_' + currentShift;
+  data = JSON.parse(localStorage.getItem(key)) || [];
+
+  const judul = localStorage.getItem('judulLaporan') || `LAPORAN ${currentShift.toUpperCase()}`;
+  document.getElementById('judulLaporan').innerText = judul;
+
+  // isi dropdown kategori
+  const filterKat = document.getElementById('filterKat');
+  filterKat.innerHTML = '<option value="SEMUA">SEMUA</option>';
+  [...new Set(data.map(d=>d.kat))].forEach(k=>{
+    filterKat.innerHTML += `<option value="${k}">${k}</option>`
+  });
+
+  renderTable();
+}
 
 function renderTable(){
   const kat = document.getElementById('filterKat').value;
   const filterData = kat === 'SEMUA'? data : data.filter(d=>d.kat===kat);
   const tbody = document.querySelector('#tabelLaporan tbody');
   tbody.innerHTML = '';
-  let totalKurang = 0, totalLebih = 0, totalRp = 0;
+  let totalKurang = 0, totalLebih = 0;
 
   filterData.forEach((d) => {
     if(d.selisih < 0) totalKurang += d.selisih;
     if(d.selisih > 0) totalLebih += d.selisih;
-    totalRp += d.selisihRp;
+
+    let status = '';
+    if(d.selisih == 0) status = '✅';
+    else if(d.selisih < 0) status = `KURANG ${Math.abs(d.selisih).toFixed(3)}`;
+    else status = `LEBIH ${d.selisih.toFixed(3)}`;
+
     tbody.innerHTML += `<tr>
       <td>${d.no}</td><td>${d.kat}</td><td>${d.kode}</td><td style="text-align:left">${d.nama}</td>
-      <td>${d.oh}</td><td>${d.fisik}</td><td>${d.harga.toLocaleString('id-ID')}</td>
-      <td class="${d.selisih < 0? 'selisih-minus' : d.selisih > 0? 'selisih-plus' : ''}">${d.selisih}</td>
-      <td class="${d.selisihRp < 0? 'selisih-minus' : d.selisihRp > 0? 'selisih-plus' : ''}">${d.selisihRp.toLocaleString('id-ID')}</td>
+      <td>${d.oh}</td><td>${d.fisik}</td>
+      <td class="${d.selisih < 0? 'selisih-minus' : d.selisih > 0? 'selisih-plus' : ''}">${d.selisih.toFixed(3)}</td>
+      <td>${status}</td>
     </tr>`;
   });
   document.getElementById('totalItem').innerText = filterData.length;
-  document.getElementById('totalKurang').innerText = totalKurang;
-  document.getElementById('totalLebih').innerText = totalLebih;
-  document.getElementById('totalRp').innerText = 'Rp ' + totalRp.toLocaleString('id-ID');
+  document.getElementById('totalKurang').innerText = totalKurang.toFixed(3);
+  document.getElementById('totalLebih').innerText = totalLebih.toFixed(3);
+  document.getElementById('totalRp').innerText = '-';
 }
-renderTable();
 
 function resetData(){
-  if(confirm('Yakin mau hapus semua data opname?')){
-    localStorage.removeItem('dataOpname');
+  if(confirm(`Yakin mau hapus semua data ${currentShift.toUpperCase()}?`)){
+    localStorage.removeItem('dataOpname_' + currentShift);
     alert('Data berhasil di reset!');
-    window.location.href='home.html';
+    loadData();
   }
 }
 
 function exportExcel(){
-  let csv = 'No,Kategori,Kode,Nama,OH,Fisik,Harga,Selisih,Selisih Rp\n';
+  if(data.length === 0){ alert('Data kosong!'); return; }
+  let csv = 'No,Kategori,Kode,Nama,OH,Fisik,Selisih\n';
   data.forEach(d=>{
-    csv += `${d.no},${d.kat},${d.kode},"${d.nama}",${d.oh},${d.fisik},${d.harga},${d.selisih},${d.selisihRp}\n`;
+    csv += `${d.no},${d.kat},${d.kode},"${d.nama}",${d.oh},${d.fisik},${d.selisih}\n`;
   });
   const blob = new Blob([csv], {type: 'text/csv'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'Laporan_Opname_K792.csv'; a.click();
+  a.href = url; a.download = `Laporan_Opname_${currentShift}_${new Date().toLocaleDateString('id-ID')}.csv`; a.click();
 }
+
+// load pertama kali
+loadData();
 </script></body></html>
